@@ -1,1 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formateur VTR</title>
 
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f3f5f7;
+      color: #222;
+    }
+
+    header {
+      background: #183b5b;
+      color: white;
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    header h1 {
+      margin: 0 0 10px;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 20px;
+    }
+
+    .intro {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .menu {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .carte {
+      background: white;
+      padding: 28px 15px;
+      border-radius: 12px;
+      text-align: center;
+      text-decoration: none;
+      color: #183b5b;
+      font-size: 20px;
+      font-weight: bold;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px;
+      color: #666;
+    }
+
+    @media (max-width: 600px) {
+      .menu {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>Maintenance des véhicules de transport routier</h1>
+  <p>Ressources pédagogiques</p>
+</header>
+
+<main>
+  <div class="intro">
+    <h2>Bienvenue</h2>
+    <p>Retrouvez ici les cours, travaux pratiques et ressources utilisés en formation.</p>
+  </div>
+
+  <div class="menu">
+    <a class="carte" href="#">📘 Cours</a>
+    <a class="carte" href="#">🔧 Travaux pratiques</a>
+    <a class="carte" href="#">📂 Ressources</a>
+    <a class="carte" href="#">✅ Quiz</a>
+  </div>
+</main>
+
+<footer>
+  Formateur VTR — Ressources pédagogiques
+</footer>
+
+</body>
+</html>
