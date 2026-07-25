@@ -60,7 +60,8 @@
 
     .carte {
       background: white;
-      padding: 28px 15px;
+      min-height: 150px;
+      padding: 24px 15px;
       border-radius: 14px;
       text-align: center;
       text-decoration: none;
@@ -68,12 +69,18 @@
       font-size: 20px;
       font-weight: bold;
       box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
     }
 
-    .carte span {
+    .icone {
+      font-size: 38px;
+      line-height: 1;
       display: block;
-      font-size: 36px;
-      margin-bottom: 10px;
     }
 
     .ressources {
@@ -116,41 +123,47 @@
   <h2 class="section-title">Bac Professionnel MVTR</h2>
 
   <div class="menu">
+
     <a class="carte" href="seconde.html">
-      <span>🚛</span>
-      Seconde
+      <span class="icone">🚛</span>
+      <span>Seconde</span>
     </a>
 
     <a class="carte" href="premiere.html">
-      <span>🔧</span>
-      Première
+      <span class="icone">🔧</span>
+      <span>Première</span>
     </a>
 
     <a class="carte" href="terminale.html">
-      <span>🎓</span>
-      Terminale
+      <span class="icone">🎓</span>
+      <span>Terminale</span>
     </a>
+
   </div>
 
   <h2 class="section-title">BTS</h2>
 
   <div class="menu">
+
     <a class="carte" href="bts1.html">
-      <span>📘</span>
-      BTS 1re année
+      <span class="icone">📘</span>
+      <span>BTS 1re année</span>
     </a>
 
     <a class="carte" href="bts2.html">
-      <span>📗</span>
-      BTS 2e année
+      <span class="icone">📗</span>
+      <span>BTS 2e année</span>
     </a>
+
   </div>
 
   <div class="ressources">
+
     <a class="carte" href="ressources.html">
-      <span>📂</span>
-      Ressources générales
+      <span class="icone">📂</span>
+      <span>Ressources générales</span>
     </a>
+
   </div>
 
 </main>
