@@ -3,6 +3,168 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Formateur VTR</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f3f5f7;
+      color: #222;
+    }
+
+    header {
+      background: #183b5b;
+      color: white;
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    header h1 {
+      margin: 0 0 10px;
+      font-size: 30px;
+    }
+
+    header p {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    main {
+      max-width: 900px;
+      margin: auto;
+      padding: 30px 18px;
+    }
+
+    .intro {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .section-title {
+      margin-top: 35px;
+      margin-bottom: 15px;
+      color: #183b5b;
+    }
+
+    .menu {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .carte {
+      background: white;
+      padding: 28px 15px;
+      border-radius: 14px;
+      text-align: center;
+      text-decoration: none;
+      color: #183b5b;
+      font-size: 20px;
+      font-weight: bold;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+    }
+
+    .carte span {
+      display: block;
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
+
+    .ressources {
+      margin-top: 35px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px 15px;
+      color: #666;
+      font-size: 14px;
+    }
+
+    @media (max-width: 600px) {
+      .menu {
+        grid-template-columns: 1fr;
+      }
+
+      header h1 {
+        font-size: 26px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>Maintenance des véhicules de transport routier</h1>
+  <p>Ressources pédagogiques</p>
+</header>
+
+<main>
+
+  <div class="intro">
+    <h2>Choisissez votre niveau</h2>
+    <p>Cours, travaux pratiques, documents et quiz.</p>
+  </div>
+
+  <h2 class="section-title">Bac Professionnel MVTR</h2>
+
+  <div class="menu">
+    <a class="carte" href="seconde.html">
+      <span>🚛</span>
+      Seconde
+    </a>
+
+    <a class="carte" href="premiere.html">
+      <span>🔧</span>
+      Première
+    </a>
+
+    <a class="carte" href="terminale.html">
+      <span>🎓</span>
+      Terminale
+    </a>
+  </div>
+
+  <h2 class="section-title">BTS</h2>
+
+  <div class="menu">
+    <a class="carte" href="bts1.html">
+      <span>📘</span>
+      BTS 1re année
+    </a>
+
+    <a class="carte" href="bts2.html">
+      <span>📗</span>
+      BTS 2e année
+    </a>
+  </div>
+
+  <div class="ressources">
+    <a class="carte" href="ressources.html">
+      <span>📂</span>
+      Ressources générales
+    </a>
+  </div>
+
+</main>
+
+<footer>
+  Formateur VTR — Ressources pédagogiques
+</footer>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Formateur VTR</title>
 
   <style>
