@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Ancrage - Rentabilité atelier</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 25px;
+    background: #f5f7f9;
+    color: #222;
+}
+
+h1 {
+    color: #17365d;
+}
+
+h2 {
+    color: #17365d;
+}
+
+.bloc {
+    background: white;
+    padding: 18px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.identite {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.identite input {
+    padding: 10px;
+    font-size: 16px;
+    flex: 1;
+    min-width: 180px;
+}
+
+.donnees {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.carte {
+    background: #eef3f8;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.carte strong {
+    display: block;
+    font-size: 22px;
+    margin-top: 5px;
+}
+
+.question {
+    margin: 15px 0;
+}
+
+.question label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+
+.question input {
+    width: 220px;
+    max-width: 100%;
+    padding: 9px;
+    font-size: 16px;
+}
+
+button {
+    margin-top: 15px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 7px;
+    font-size: 16px;
+    cursor: pointer;
+    background: #17365d;
+    color: white;
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.message {
+    display: none;
+    margin-top: 18px;
+    padding: 15px;
+    background: white;
+    border-radius: 8px;
+}
+
+#imprevu {
+    display: none;
+}
+
+.alerte {
+    background: #fff4e5;
+    border-left: 5px solid #c77700;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.choix {
+    margin-top: 15px;
+}
+
+.choix label {
+    margin-right: 20px;
+}
+
+textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 10px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+@media(max-width:700px) {
+    .donnees {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<h1>⚓ Ancrage – Mon atelier est-il rentable ?</h1>
+
+<div class="bloc">
+    <strong>Vous êtes chef d’un atelier poids lourds.</strong>
+
+    <p>
+        À partir des données économiques ci-dessous,
+        analysez la situation de votre entreprise.
+    </p>
+
+    <div class="identite">
+        <input id="nom" placeholder="Nom">
+        <input id="prenom" placeholder="Prénom">
+        <input id="groupe" placeholder="Groupe">
+    </div>
+</div>
+
+<div class="bloc">
+
+    <h2>Situation de départ</h2>
+
+    <div class="donnees">
+
+        <div class="carte">
+            Chiffre d'affaires
+            <strong>120 000 €</strong>
+        </div>
+
+        <div class="carte">
+            Charges variables
+            <strong>48 000 €</strong>
+        </div>
+
+        <div class="carte">
+            Charges fixes
+            <strong>65 000 €</strong>
+        </div>
+
+    </div>
+
+</div>
+
+<div class="bloc">
+
+    <h2>Analyse économique</h2>
+
+    <div class="question">
+        <label>1. Marge sur coûts variables :</label>
+        <input id="mcv" type="number" placeholder="€">
+    </div>
+
+    <div class="question">
+        <label>2. Taux de marge sur coûts variables :</label>
+        <input id="taux" type="number" step="0.1" placeholder="%">
+    </div>
+
+    <div class="question">
+        <label>3. Seuil de rentabilité :</label>
+        <input id="seuil" type="number" placeholder="€">
+    </div>
+
+    <div class="question">
+        <label>4. Marge de sécurité :</label>
+        <input id="marge" type="number" placeholder="€">
+    </div>
+
+    <div class="question">
+        <label>5. Résultat :</label>
+        <input id="resultat" type="number" placeholder="€">
+    </div>
+
+    <button id="verifierCalculs">
+        Vérifier mes calculs
+    </button>
+
+    <div id="messageCalculs" class="message"></div>
+
+</div>
+
+<div id="imprevu">
+
+    <div class="bloc">
+
+        <div class="alerte">
+
+            <h2>⚠️ IMPRÉVU</h2>
+
+            <p>
+                Un client important quitte votre atelier.
+            </p>
+
+            <p>
+                Votre chiffre d'affaires mensuel diminue de
+                <strong>15 000 €</strong>.
+            </p>
+
+            <p>
+                Les charges fixes restent identiques et
+                le taux de charges variables reste proportionnel
+                à l'activité.
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="bloc">
+
+        <h2>Nouvelle décision</h2>
+
+        <p>
+            Votre atelier est-il encore rentable ?
+        </p>
+
+        <div class="choix">
+
+            <label>
+                <input type="radio" name="rentable" value="oui">
+                Oui
+            </label>
+
+            <label>
+                <input type="radio" name="rentable" value="non">
+                Non
+            </label>
+
+        </div>
+
+        <p>
+            <strong>Justifiez votre réponse :</strong>
+        </p>
+
+        <textarea id="justification"
+        placeholder="Expliquez votre raisonnement..."></textarea>
+
+        <button id="validerDecision">
+            Valider ma décision
+        </button>
+
+        <div id="messageFinal" class="message"></div>
+
+    </div>
+
+</div>
+
+<script>
+
+const URL_RESULTATS = "https://script.google.com/macros/s/AKfycbxtkjxERsQrcyxI23_BwhUFAh1JPhGLgOrO9UIwnvhSw3zL-fUEQi9WPG6i95E16q_g/exec";
+
+let tentatives = 0;
+let premierScore = null;
+let scoreCalculs = 0;
+
+function proche(valeur, cible, tolerance) {
+    return Math.abs(valeur - cible) <= tolerance;
+}
+
+document.getElementById("verifierCalculs")
+.addEventListener("click", function() {
+
+    const nom =
+        document.getElementById("nom").value.trim();
+
+    const prenom =
+        document.getElementById("prenom").value.trim();
+
+    const groupe =
+        document.getElementById("groupe").value.trim();
+
+    const message =
+        document.getElementById("messageCalculs");
+
+    if (!nom || !prenom || !groupe) {
+
+        message.style.display = "block";
+
+        message.innerHTML =
+        "⚠️ Indiquez votre nom, votre prénom et votre groupe.";
+
+        return;
+    }
+
+    const mcv =
+        Number(document.getElementById("mcv").value);
+
+    const taux =
+        Number(document.getElementById("taux").value);
+
+    const seuil =
+        Number(document.getElementById("seuil").value);
+
+    const marge =
+        Number(document.getElementById("marge").value);
+
+    const resultat =
+        Number(document.getElementById("resultat").value);
+
+    tentatives++;
+
+    let score = 0;
+
+    if (proche(mcv, 72000, 1)) score++;
+
+    if (proche(taux, 60, 0.2)) score++;
+
+    if (proche(seuil, 108333.33, 100)) score++;
+
+    if (proche(marge, 11666.67, 100)) score++;
+
+    if (proche(resultat, 7000, 1)) score++;
+
+    scoreCalculs = score;
+
+    if (premierScore === null) {
+        premierScore = score;
+    }
+
+    message.style.display = "block";
+
+    if (score === 5) {
+
+        message.innerHTML =
+        "✅ Vos calculs sont cohérents : <strong>5 / 5</strong>." +
+        "<br><br>Votre atelier est actuellement rentable.";
+
+        document.getElementById("verifierCalculs").disabled = true;
+
+        document.getElementById("imprevu").style.display = "block";
+
+        document.getElementById("imprevu")
+        .scrollIntoView({ behavior: "smooth" });
+
+    } else {
+
+        message.innerHTML =
+        "🔎 Vous avez <strong>" +
+        score +
+        " réponse(s) cohérente(s) sur 5</strong>." +
+        "<br><br>" +
+        "Reprenez vos calculs avant de poursuivre.";
+
+    }
+
+});
+
+document.getElementById("validerDecision")
+.addEventListener("click", function() {
+
+    const choix =
+        document.querySelector(
+            'input[name="rentable"]:checked'
+        );
+
+    const justification =
+        document.getElementById("justification")
+        .value.trim();
+
+    const message =
+        document.getElementById("messageFinal");
+
+    if (!choix) {
+
+        message.style.display = "block";
+
+        message.innerHTML =
+        "⚠️ Indiquez si l'atelier est encore rentable.";
+
+        return;
+    }
+
+    if (justification.length < 10) {
+
+        message.style.display = "block";
+
+        message.innerHTML =
+        "⚠️ Justifiez davantage votre décision.";
+
+        return;
+    }
+
+    tentatives++;
+
+    let scoreFinal = 5;
+
+    if (choix.value === "non") {
+        scoreFinal++;
+    }
+
+    message.style.display = "block";
+
+    if (choix.value === "non") {
+
+        message.innerHTML =
+        "✅ Décision cohérente." +
+        "<br><br>" +
+        "Le chiffre d'affaires tombe à " +
+        "<strong>105 000 €</strong>." +
+        "<br>" +
+        "Le seuil de rentabilité reste supérieur : " +
+        "<strong>environ 108 333 €</strong>." +
+        "<br><br>" +
+        "L'atelier passe donc sous son seuil de rentabilité." +
+        "<br><br>" +
+        "<strong>La marge de sécurité indiquait bien " +
+        "que l'entreprise était fragile.</strong>";
+
+        envoyerResultat(scoreFinal);
+
+        document.getElementById("validerDecision")
+        .disabled = true;
+
+    } else {
+
+        message.innerHTML =
+        "🔎 Votre décision mérite d'être reconsidérée." +
+        "<br><br>" +
+        "Comparez le nouveau chiffre d'affaires " +
+        "au seuil de rentabilité que vous avez calculé.";
+
+    }
+
+});
+
+function envoyerResultat(scoreFinal) {
+
+    const donnees = new URLSearchParams();
+
+    donnees.append(
+        "nom",
+        document.getElementById("nom").value.trim()
+    );
+
+    donnees.append(
+        "prenom",
+        document.getElementById("prenom").value.trim()
+    );
+
+    donnees.append(
+        "groupe",
+        document.getElementById("groupe").value.trim()
+    );
+
+    donnees.append(
+        "ancrage",
+        "Simulation économique - Rentabilité atelier"
+    );
+
+    donnees.append(
+        "premierScore",
+        premierScore + "/5"
+    );
+
+    donnees.append(
+        "scoreFinal",
+        scoreFinal + "/6"
+    );
+
+    donnees.append(
+        "tentatives",
+        tentatives
+    );
+
+    fetch(URL_RESULTATS, {
+        method: "POST",
+        mode: "no-cors",
+        body: donnees
+    });
+
+}
+
+</script>
+
+</body>
+</html>
