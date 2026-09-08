@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Ancrage – Planning d'atelier</title>
+
+<style>
+body{
+  font-family: Arial, sans-serif;
+  margin:0;
+  padding:20px;
+  background:#f5f7fa;
+  color:#222;
+}
+
+.container{
+  max-width:1200px;
+  margin:auto;
+}
+
+h1{
+  text-align:center;
+  color:#1f4e79;
+}
+
+h2{
+  color:#1f4e79;
+  margin-top:30px;
+}
+
+.info{
+  background:white;
+  padding:16px;
+  border-radius:10px;
+  margin-bottom:20px;
+  box-shadow:0 2px 6px rgba(0,0,0,.08);
+}
+
+.cards{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-bottom:20px;
+}
+
+.card{
+  background:white;
+  border:2px solid #1f4e79;
+  border-radius:8px;
+  padding:10px 12px;
+  cursor:pointer;
+  min-width:180px;
+}
+
+.card.selected{
+  background:#dcecff;
+}
+
+.card.placed{
+  opacity:.45;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:white;
+  font-size:13px;
+}
+
+th,td{
+  border:1px solid #bbb;
+  padding:5px;
+  text-align:center;
+}
+
+th{
+  background:#e9eef3;
+}
+
+.tech{
+  font-weight:bold;
+  background:#f1f1f1;
+  min-width:90px;
+}
+
+.slot{
+  min-width:55px;
+  height:48px;
+  cursor:pointer;
+}
+
+.slot:hover{
+  background:#eef6ff;
+}
+
+.job{
+  background:#d7ead3;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.warning{
+  background:#fff3cd;
+  border:2px solid #e0a800;
+  padding:18px;
+  border-radius:10px;
+  margin-top:25px;
+  display:none;
+}
+
+.final-zone{
+  display:none;
+  margin-top:25px;
+}
+
+button{
+  padding:12px 22px;
+  border:none;
+  border-radius:7px;
+  font-size:16px;
+  cursor:pointer;
+  margin:10px 5px 10px 0;
+}
+
+.primary{
+  background:#1f4e79;
+  color:white;
+}
+
+.danger{
+  background:#b02a37;
+  color:white;
+}
+
+.secondary{
+  background:#666;
+  color:white;
+}
+
+textarea{
+  width:100%;
+  min-height:100px;
+  padding:10px;
+  font-size:15px;
+  box-sizing:border-box;
+}
+
+.message{
+  padding:12px;
+  margin-top:15px;
+  border-radius:8px;
+  background:#eef3f7;
+}
+
+.legend{
+  font-size:13px;
+  margin-bottom:12px;
+}
+
+@media(max-width:800px){
+  .planning-wrap{
+    overflow-x:auto;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>⚓ Ancrage – Planning d'atelier</h1>
+
+<div class="info">
+
+<p><strong>Vous êtes chef d'atelier.</strong></p>
+
+<p>
+Votre mission est d'organiser les interventions de la journée
+de <strong>8 h à 17 h</strong>.
+</p>
+
+<p>
+Sélectionnez une intervention puis cliquez sur l'heure de début
+dans la ligne du technicien choisi.
+</p>
+
+<p>
+Vous êtes libre de votre organisation.
+Lorsque vous considérez votre planning terminé,
+cliquez sur <strong>TERMINÉ</strong>.
+</p>
+
+</div>
+
+<h2>👥 Compétences de l'équipe</h2>
+
+<div class="info">
+
+<table>
+<tr>
+<th>Technicien</th>
+<th>Mécanique</th>
+<th>Freinage</th>
+<th>Électricité</th>
+<th>Diagnostic</th>
+</tr>
+
+<tr>
+<td>Thomas</td>
+<td>🟢</td>
+<td>🟡</td>
+<td>🟡</td>
+<td>🟡</td>
+</tr>
+
+<tr>
+<td>Lucas</td>
+<td>🟢</td>
+<td>🟢</td>
+<td>🟡</td>
+<td>🟢</td>
+</tr>
+
+<tr>
+<td>Mehdi</td>
+<td>🟢</td>
+<td>🟢</td>
+<td>🟢</td>
+<td>🔴</td>
+</tr>
+
+<tr>
+<td>Paul</td>
+<td>🟢</td>
+<td>🟡</td>
+<td>🟢</td>
+<td>🟢</td>
+</tr>
+</table>
+
+<p class="legend">
+🟢 autonome – 🟡 compétence partielle – 🔴 non maîtrisé
+</p>
+
+<p>
+<strong>Ressources :</strong>
+2 fosses – 1 poste entretien – 1 outil diagnostic –
+1 équipement de levage.
+</p>
+
+</div>
+
+<h2>🚛 Interventions</h2>
+
+<div id="cards" class="cards"></div>
+
+<p>
+👉 Pour retirer une intervention déjà placée,
+cliquez directement dessus dans le planning.
+</p>
+
+<h2>📅 Planning</h2>
+
+<div class="planning-wrap">
+
+<table id="planning">
+
+<thead>
+<tr>
+<th>Technicien</th>
+<th>8h00</th>
+<th>8h30</th>
+<th>9h00</th>
+<th>9h30</th>
+<th>10h00</th>
+<th>10h30</th>
+<th>11h00</th>
+<th>11h30</th>
+<th>12h00</th>
+<th>12h30</th>
+<th>13h00</th>
+<th>13h30</th>
+<th>14h00</th>
+<th>14h30</th>
+<th>15h00</th>
+<th>15h30</th>
+<th>16h00</th>
+<th>16h30</th>
+</tr>
+</thead>
+
+<tbody id="planningBody"></tbody>
+
+</table>
+
+</div>
+
+<button id="finishInitial" class="primary">
+✅ TERMINÉ
+</button>
+
+<div id="initialMessage" class="message" style="display:none"></div>
+
+<div id="unexpected" class="warning">
+
+<h2>🚨 Impondérable</h2>
+
+<p>
+Il est <strong>11 h 15</strong>.
+</p>
+
+<p>
+Un tracteur vient de tomber en panne à proximité de l'atelier.
+Il peut arriver dans 30 minutes.
+</p>
+
+<p>
+L'intervention est estimée à <strong>2 heures</strong>.
+</p>
+
+<p>
+Elle nécessite :
+<strong>un technicien compétent en diagnostic + l'outil de diagnostic</strong>.
+</p>
+
+<p>
+Le client souhaite récupérer le véhicule
+<strong>avant 15 h 30</strong>.
+</p>
+
+<p><strong>Que décidez-vous ?</strong></p>
+
+<button id="acceptUrgent" class="primary">
+J'accepte le véhicule
+</button>
+
+<button id="refuseUrgent" class="danger">
+Je refuse / je reporte
+</button>
+
+</div>
+
+<div id="finalZone" class="final-zone">
+
+<h2>🧠 Justifiez votre décision</h2>
+
+<p>
+Expliquez votre organisation et les modifications que vous avez réalisées.
+</p>
+
+<textarea id="justification"
+placeholder="J'ai choisi de... parce que..."></textarea>
+
+<br>
+
+<button id="finishFinal" class="primary">
+✅ TERMINER LA RÉORGANISATION
+</button>
+
+<div id="finalMessage" class="message" style="display:none"></div>
+
+</div>
+
+</div>
+
+<script>
+
+const technicians = [
+  "Thomas",
+  "Lucas",
+  "Mehdi",
+  "Paul"
+];
+
+const interventions = [
+
+{
+ id:"A",
+ title:"Tracteur A – Défaut freinage",
+ duration:6,
+ info:"3 h – fosse + diagnostic"
+},
+
+{
+ id:"B",
+ title:"Porteur B – Entretien",
+ duration:8,
+ info:"4 h – restitution avant 15 h"
+},
+
+{
+ id:"C",
+ title:"Tracteur C – Diagnostic moteur",
+ duration:4,
+ info:"2 h – outil diagnostic"
+},
+
+{
+ id:"D",
+ title:"Remorque D – Défaut éclairage",
+ duration:3,
+ info:"1 h 30 – restitution avant 12 h"
+},
+
+{
+ id:"E",
+ title:"Tracteur E – Embrayage",
+ duration:12,
+ info:"6 h – fosse + levage"
+}
+
+];
+
+let currentJobs = [...interventions];
+
+let selectedJob = null;
+
+let placements = {};
+
+let initialPlanning = null;
+
+let finalDecision = "";
+
+let modificationCount = 0;
+
+const cards = document.getElementById("cards");
+
+const planningBody = document.getElementById("planningBody");
+
+
+function renderCards(){
+
+ cards.innerHTML="";
+
+ currentJobs.forEach(job=>{
+
+   const card=document.createElement("div");
+
+   card.className="card";
+
+   if(selectedJob===job.id){
+     card.classList.add("selected");
+   }
+
+   if(placements[job.id]){
+     card.classList.add("placed");
+   }
+
+   card.innerHTML=
+   "<strong>"+job.id+" – "+job.title+"</strong><br>"+
+   "<small>"+job.info+"</small>";
+
+   card.addEventListener("click",()=>{
+
+     if(placements[job.id]) return;
+
+     selectedJob=job.id;
+
+     renderCards();
+
+   });
+
+   cards.appendChild(card);
+
+ });
+
+}
+
+
+function buildPlanning(){
+
+ planningBody.innerHTML="";
+
+ technicians.forEach((tech,techIndex)=>{
+
+   const row=document.createElement("tr");
+
+   const techCell=document.createElement("td");
+
+   techCell.className="tech";
+
+   techCell.textContent=tech;
+
+   row.appendChild(techCell);
+
+
+   for(let slot=0;slot<18;slot++){
+
+     const cell=document.createElement("td");
+
+     cell.className="slot";
+
+     cell.dataset.tech=tech;
+
+     cell.dataset.slot=slot;
+
+     cell.addEventListener("click",()=>{
+
+       if(selectedJob){
+
+         placeJob(selectedJob,tech,slot);
+
+       }
+
+     });
+
+     row.appendChild(cell);
+
+   }
+
+   planningBody.appendChild(row);
+
+ });
+
+ renderPlanning();
+
+}
+
+
+function placeJob(jobId,tech,startSlot){
+
+ const job=currentJobs.find(j=>j.id===jobId);
+
+ if(!job) return;
+
+ if(startSlot+job.duration>18){
+
+   alert("Cette intervention dépasse 17 h.");
+
+   return;
+
+ }
+
+ for(let i=startSlot;i<startSlot+job.duration;i++){
+
+   for(const id in placements){
+
+     const p=placements[id];
+
+     if(
+       p.tech===tech &&
+       i>=p.start &&
+       i<p.start+p.duration
+     ){
+
+       alert("Ce technicien est déjà occupé sur ce créneau.");
+
+       return;
+
+     }
+
+   }
+
+ }
+
+ placements[jobId]={
+   tech:tech,
+   start:startSlot,
+   duration:job.duration
+ };
+
+ selectedJob=null;
+
+ if(initialPlanning){
+   modificationCount++;
+ }
+
+ renderCards();
+
+ renderPlanning();
+
+}
+
+
+function renderPlanning(){
+
+ document.querySelectorAll(".slot").forEach(cell=>{
+
+   cell.innerHTML="";
+   cell.className="slot";
+   cell.removeAttribute("colspan");
+   cell.style.display="";
+
+ });
+
+ for(const jobId in placements){
+
+   const p=placements[jobId];
+
+   const job=currentJobs.find(j=>j.id===jobId);
+
+   const row=[...planningBody.rows]
+   .find(r=>r.cells[0].textContent===p.tech);
+
+   if(!row) continue;
+
+   const startCell=row.cells[p.start+1];
+
+   startCell.className="job";
+
+   startCell.colSpan=p.duration;
+
+   startCell.innerHTML=
+   "<strong>"+jobId+"</strong><br>"+
+   job.title;
+
+   startCell.addEventListener("click",(e)=>{
+
+     e.stopPropagation();
+
+     delete placements[jobId];
+
+     if(initialPlanning){
+       modificationCount++;
+     }
+
+     renderCards();
+
+     buildPlanning();
+
+   });
+
+   for(let i=1;i<p.duration;i++){
+
+     row.cells[p.start+1+i].style.display="none";
+
+   }
+
+ }
+
+}
+
+
+document.getElementById("finishInitial")
+.addEventListener("click",()=>{
+
+ if(Object.keys(placements).length===0){
+
+   alert("Commencez par construire votre planning.");
+
+   return;
+
+ }
+
+ initialPlanning=JSON.parse(JSON.stringify(placements));
+
+ document.getElementById("initialMessage").style.display="block";
+
+ document.getElementById("initialMessage").innerHTML=
+ "<strong>Planning initial enregistré.</strong><br>"+
+ "Une nouvelle situation vient de se présenter...";
+
+ document.getElementById("unexpected").style.display="block";
+
+ document.getElementById("finishInitial").disabled=true;
+
+ document.getElementById("unexpected")
+ .scrollIntoView({behavior:"smooth"});
+
+});
+
+
+document.getElementById("acceptUrgent")
+.addEventListener("click",()=>{
+
+ finalDecision="Accepté";
+
+ if(!currentJobs.find(j=>j.id==="F")){
+
+   currentJobs.push({
+
+     id:"F",
+
+     title:"Tracteur F – Dépannage urgent",
+
+     duration:4,
+
+     info:"2 h – diagnostic – restitution avant 15 h 30"
+
+   });
+
+ }
+
+ document.getElementById("unexpected").style.display="none";
+
+ document.getElementById("finalZone").style.display="block";
+
+ renderCards();
+
+});
+
+
+document.getElementById("refuseUrgent")
+.addEventListener("click",()=>{
+
+ finalDecision="Refusé / reporté";
+
+ document.getElementById("unexpected").style.display="none";
+
+ document.getElementById("finalZone").style.display="block";
+
+});
+
+
+document.getElementById("finishFinal")
+.addEventListener("click",()=>{
+
+ const justification=
+ document.getElementById("justification").value.trim();
+
+ if(justification.length<15){
+
+   alert("Expliquez brièvement votre décision.");
+
+   return;
+
+ }
+
+ const finalPlanning=
+ JSON.parse(JSON.stringify(placements));
+
+ document.getElementById("finalMessage").style.display="block";
+
+ document.getElementById("finalMessage").innerHTML=
+
+ "<strong>✅ Travail enregistré.</strong><br><br>"+
+
+ "Décision face à l'impondérable : <strong>"+
+ finalDecision+
+ "</strong><br>"+
+
+ "Nombre de modifications après le planning initial : <strong>"+
+ modificationCount+
+ "</strong><br><br>"+
+
+ "Il n'existe pas ici de solution unique.<br>"+
+ "Votre organisation devra être analysée et justifiée.";
+
+ document.getElementById("finishFinal").disabled=true;
+
+ console.log("Planning initial :",initialPlanning);
+
+ console.log("Planning final :",finalPlanning);
+
+ console.log("Décision :",finalDecision);
+
+ console.log("Modifications :",modificationCount);
+
+ console.log("Justification :",justification);
+
+});
+
+
+renderCards();
+
+buildPlanning();
+
+</script>
+
+</body>
+</html>
