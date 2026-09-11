@@ -159,6 +159,12 @@ textarea{
   margin-bottom:12px;
 }
 
+
+.identity-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.identity-grid label{font-weight:bold;color:#1f4e79}
+.identity-grid input{width:100%;margin-top:6px;padding:10px;border:1px solid #bbb;border-radius:6px;box-sizing:border-box;font-size:15px}
+@media(max-width:700px){.identity-grid{grid-template-columns:1fr}}
+
 @media(max-width:800px){
   .planning-wrap{
     overflow-x:auto;
@@ -193,6 +199,21 @@ Lorsque vous considérez votre planning terminé,
 cliquez sur <strong>TERMINÉ</strong>.
 </p>
 
+</div>
+
+<h2>🪪 Identification</h2>
+<div class="info">
+  <div class="identity-grid">
+    <label>Nom
+      <input id="nom" type="text" autocomplete="family-name" placeholder="Votre nom">
+    </label>
+    <label>Prénom
+      <input id="prenom" type="text" autocomplete="given-name" placeholder="Votre prénom">
+    </label>
+    <label>Groupe
+      <input id="groupe" type="text" placeholder="Ex. BTS 1 VTR">
+    </label>
+  </div>
 </div>
 
 <h2>👥 Compétences de l'équipe</h2>
@@ -367,6 +388,47 @@ placeholder="J'ai choisi de... parce que..."></textarea>
 </div>
 
 <script>
+
+const APPS_SCRIPT_URL =
+"https://script.google.com/macros/s/AKfycbxtkjxERsQrcyxI23_BwhUFAh1JPhGLgOrO9UIwnvhSw3zL-fUEQi9WPG6i95E16q_g/exec";
+
+function slotToTime(slot){
+  const totalMinutes = 8 * 60 + slot * 30;
+  const h = Math.floor(totalMinutes / 60);
+  const m = totalMinutes % 60;
+  return String(h).padStart(2,"0") + "h" + String(m).padStart(2,"0");
+}
+
+function planningToText(planning){
+  if(!planning) return "";
+  return Object.entries(planning)
+    .sort((a,b)=>{
+      const pa=a[1], pb=b[1];
+      if(pa.tech !== pb.tech){
+        return technicians.indexOf(pa.tech) - technicians.indexOf(pb.tech);
+      }
+      return pa.start - pb.start;
+    })
+    .map(([jobId,p])=>{
+      const job = currentJobs.find(j=>j.id===jobId) ||
+                  interventions.find(j=>j.id===jobId);
+      const title = job ? job.title : jobId;
+      return jobId + " – " + title + " | " + p.tech + " | " +
+             slotToTime(p.start) + " à " + slotToTime(p.start+p.duration);
+    })
+    .join(" ; ");
+}
+
+async function envoyerVersGoogleSheets(data){
+  const body = new URLSearchParams(data);
+  await fetch(APPS_SCRIPT_URL,{
+    method:"POST",
+    mode:"no-cors",
+    headers:{"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"},
+    body:body.toString()
+  });
+}
+
 
 const technicians = [
   "Thomas",
@@ -706,50 +768,70 @@ document.getElementById("refuseUrgent")
 
 
 document.getElementById("finishFinal")
-.addEventListener("click",()=>{
+.addEventListener("click", async ()=>{
 
- const justification=
- document.getElementById("justification").value.trim();
+  const nom = document.getElementById("nom").value.trim();
+  const prenom = document.getElementById("prenom").value.trim();
+  const groupe = document.getElementById("groupe").value.trim();
+  const justification = document.getElementById("justification").value.trim();
 
- if(justification.length<15){
+  if(!nom || !prenom || !groupe){
+    alert("Renseignez votre nom, votre prénom et votre groupe.");
+    document.getElementById("nom").scrollIntoView({behavior:"smooth"});
+    return;
+  }
 
-   alert("Expliquez brièvement votre décision.");
+  if(justification.length < 15){
+    alert("Expliquez brièvement votre décision.");
+    return;
+  }
 
-   return;
+  if(!initialPlanning || !finalDecision){
+    alert("Terminez d'abord le planning initial et prenez une décision face à l'impondérable.");
+    return;
+  }
 
- }
+  const finalPlanning = JSON.parse(JSON.stringify(placements));
+  const bouton = document.getElementById("finishFinal");
+  const finalMessage = document.getElementById("finalMessage");
 
- const finalPlanning=
- JSON.parse(JSON.stringify(placements));
+  bouton.disabled = true;
+  bouton.textContent = "⏳ ENVOI EN COURS...";
+  finalMessage.style.display = "block";
+  finalMessage.innerHTML = "<strong>Enregistrement en cours...</strong>";
 
- document.getElementById("finalMessage").style.display="block";
+  const donnees = {
+    type:"planning",
+    nom:nom,
+    prenom:prenom,
+    groupe:groupe,
+    planningInitial:planningToText(initialPlanning),
+    decision:finalDecision,
+    modifications:String(modificationCount),
+    justification:justification,
+    planningFinal:planningToText(finalPlanning)
+  };
 
- document.getElementById("finalMessage").innerHTML=
+  try{
+    await envoyerVersGoogleSheets(donnees);
 
- "<strong>✅ Travail enregistré.</strong><br><br>"+
+    finalMessage.innerHTML =
+      "<strong>✅ Travail envoyé.</strong><br><br>" +
+      "Décision face à l'impondérable : <strong>" + finalDecision + "</strong><br>" +
+      "Nombre de modifications après le planning initial : <strong>" +
+      modificationCount + "</strong><br><br>" +
+      "Votre planning initial, votre décision, votre justification et votre planning final ont été transmis.";
 
- "Décision face à l'impondérable : <strong>"+
- finalDecision+
- "</strong><br>"+
+    bouton.textContent = "✅ TRAVAIL ENVOYÉ";
 
- "Nombre de modifications après le planning initial : <strong>"+
- modificationCount+
- "</strong><br><br>"+
-
- "Il n'existe pas ici de solution unique.<br>"+
- "Votre organisation devra être analysée et justifiée.";
-
- document.getElementById("finishFinal").disabled=true;
-
- console.log("Planning initial :",initialPlanning);
-
- console.log("Planning final :",finalPlanning);
-
- console.log("Décision :",finalDecision);
-
- console.log("Modifications :",modificationCount);
-
- console.log("Justification :",justification);
+  }catch(error){
+    console.error("Erreur d'envoi :",error);
+    finalMessage.innerHTML =
+      "<strong>❌ L'envoi n'a pas abouti.</strong><br>" +
+      "Votre travail reste affiché. Prévenez l'enseignant avant de fermer la page.";
+    bouton.disabled = false;
+    bouton.textContent = "🔁 RÉESSAYER L'ENVOI";
+  }
 
 });
 
