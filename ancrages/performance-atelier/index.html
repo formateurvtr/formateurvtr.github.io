@@ -57,10 +57,49 @@ th{background:#e9eef3}
 <div class="card"><div class="token-row" id="tokens"></div>
 <div class="dropzones"><div class="zone" data-zone="lt"><h4>&lt; 100 %</h4></div><div class="zone" data-zone="eq"><h4>= 100 %</h4></div><div class="zone" data-zone="gt"><h4>&gt; 100 %</h4></div></div>
 <button id="checkClass" class="primary">✅ VÉRIFIER LE CLASSEMENT</button><div id="classMsg" class="message hidden"></div></div>
-<h2>Décision de chef d’atelier</h2>
-<div class="card"><label>Technicien choisi<select id="tech"><option value="">-- Choisir --</option><option>Thomas</option><option>Lucas</option><option>Mehdi</option><option>Paul</option></select></label>
-<label style="display:block;margin-top:14px">Justification<textarea id="just"></textarea></label>
-<button id="validateAnalysis" class="primary">✅ VALIDER MON ANALYSE</button><div id="analysisMsg" class="message hidden"></div></div>
+<h2>Diagnostic du chef d’atelier</h2>
+<div class="card">
+<p><strong>Vous devez préparer un entretien avec un technicien dont les résultats nécessitent une analyse.</strong></p>
+<p>À partir de la <strong>productivité</strong>, de l’<strong>efficacité</strong> et du <strong>rendement</strong>, identifiez une situation qui mérite d’être étudiée.</p>
+<p class="small">⚠️ Un indicateur défavorable ne signifie pas nécessairement que le technicien travaille mal. Le rôle du chef d’atelier est d’abord de rechercher l’origine de l’écart avant de décider d’une action.</p>
+
+<label>Technicien à analyser
+<select id="tech">
+  <option value="">-- Choisir --</option>
+  <option>Thomas</option>
+  <option>Lucas</option>
+  <option>Mehdi</option>
+  <option>Paul</option>
+</select>
+</label>
+
+<div style="margin-top:16px">
+  <strong style="color:#1f4e79">Quel(s) indicateur(s) attire(nt) votre attention ?</strong>
+  <div class="answers" style="margin-top:8px">
+    <label><input type="checkbox" class="indicator" value="Productivité">Productivité</label>
+    <label><input type="checkbox" class="indicator" value="Efficacité">Efficacité</label>
+    <label><input type="checkbox" class="indicator" value="Rendement">Rendement</label>
+  </div>
+</div>
+
+<label style="display:block;margin-top:14px">Quelle pourrait être l’origine de l’écart ?
+<select id="cause">
+  <option value="">-- Choisir une hypothèse --</option>
+  <option>Organisation ou planning</option>
+  <option>Attente de pièces ou d’outillage</option>
+  <option>Difficulté technique ou compétence</option>
+  <option>Temps prévu ou temps vendu inadapté</option>
+  <option>Autre cause à rechercher</option>
+</select>
+</label>
+
+<label style="display:block;margin-top:14px">Justifiez votre diagnostic avec les chiffres
+<textarea id="just" placeholder="Exemple : son rendement est de ... %, alors que son efficacité est de ... %. Cela peut indiquer que..."></textarea>
+</label>
+
+<button id="validateAnalysis" class="primary">✅ VALIDER MON DIAGNOSTIC</button>
+<div id="analysisMsg" class="message hidden"></div>
+</div>
 </div></div>
 <script>
 const people={Thomas:{dispo:8,prevu:7,realise:7.5,vendu:6.5},Lucas:{dispo:8,prevu:8,realise:7,vendu:8},Mehdi:{dispo:8,prevu:7.5,realise:7.5,vendu:7},Paul:{dispo:8,prevu:6,realise:6.5,vendu:7}};
@@ -74,5 +113,51 @@ let selected=null,places={};
 function renderTokens(){const s=document.getElementById("tokens");s.innerHTML="";Object.keys(people).forEach(n=>{if(!places[n]){const t=document.createElement("span");t.className="token";t.textContent=n;t.onclick=()=>{document.querySelectorAll(".token").forEach(x=>x.classList.remove("selected"));t.classList.add("selected");selected=n};s.appendChild(t)}});document.querySelectorAll(".zone").forEach(z=>{z.querySelectorAll(".token").forEach(x=>x.remove());Object.entries(places).forEach(([n,v])=>{if(v===z.dataset.zone){const t=document.createElement("span");t.className="token placed";t.textContent=n;t.onclick=e=>{e.stopPropagation();delete places[n];renderTokens()};z.appendChild(t)}})})}
 document.querySelectorAll(".zone").forEach(z=>z.onclick=()=>{if(selected){places[selected]=z.dataset.zone;selected=null;renderTokens()}});renderTokens();
 document.getElementById("checkClass").onclick=()=>{const exp={Thomas:"lt",Lucas:"gt",Mehdi:"lt",Paul:"gt"},m=document.getElementById("classMsg");m.classList.remove("hidden");let k=0;Object.keys(exp).forEach(n=>{if(places[n]===exp[n])k++});m.textContent=k===4?"Classement cohérent.":"Classement : "+k+"/4 correct.";}
-document.getElementById("validateAnalysis").onclick=()=>{const tech=document.getElementById("tech").value,j=document.getElementById("just").value.trim();if(!tech){alert("Choisissez un technicien.");return}if(j.length<30){alert("Développez votre justification.");return}localStorage.setItem("s4_activity_done","1");localStorage.setItem("s4_decision",tech);localStorage.setItem("s4_justification",j);const m=document.getElementById("analysisMsg");m.classList.remove("hidden");m.innerHTML="<strong>Analyse validée.</strong><br>Vous pourrez maintenant réaliser le test final après le bloc Rendement.";document.getElementById("validateAnalysis").disabled=true;}
+document.getElementById("validateAnalysis").onclick=()=>{
+  const tech=document.getElementById("tech").value;
+  const cause=document.getElementById("cause").value;
+  const j=document.getElementById("just").value.trim();
+  const indicateurs=[...document.querySelectorAll(".indicator:checked")].map(x=>x.value);
+
+  if(!tech){
+    alert("Choisissez le technicien que vous souhaitez analyser.");
+    return;
+  }
+
+  if(indicateurs.length===0){
+    alert("Sélectionnez au moins un indicateur : productivité, efficacité ou rendement.");
+    return;
+  }
+
+  if(!cause){
+    alert("Choisissez une hypothèse pouvant expliquer l'écart.");
+    return;
+  }
+
+  const contientChiffre=/\d/.test(j);
+  const contientPourcentage=/%/.test(j);
+  const contientMotIndicateur=/(productivit|efficacit|rendement)/i.test(j);
+
+  if(j.length<45 || !contientChiffre || (!contientPourcentage && !contientMotIndicateur)){
+    alert("Votre justification doit utiliser les résultats chiffrés et au moins un indicateur. Exemple : rendement 86,7 %, efficacité 93,3 %...");
+    return;
+  }
+
+  localStorage.setItem("s4_activity_done","1");
+  localStorage.setItem("s4_decision",tech);
+  localStorage.setItem("s4_indicateurs",indicateurs.join(", "));
+  localStorage.setItem("s4_cause",cause);
+  localStorage.setItem("s4_justification",j);
+
+  const m=document.getElementById("analysisMsg");
+  m.classList.remove("hidden");
+  m.innerHTML=
+    "<strong>✅ Diagnostic validé.</strong><br>"+
+    "Technicien analysé : <strong>"+tech+"</strong><br>"+
+    "Indicateur(s) : <strong>"+indicateurs.join(", ")+"</strong><br>"+
+    "Hypothèse : <strong>"+cause+"</strong><br><br>"+
+    "Votre analyse est enregistrée. Vous pourrez réaliser le test final après le bloc Rendement.";
+
+  document.getElementById("validateAnalysis").disabled=true;
+}
 </script></body></html>
