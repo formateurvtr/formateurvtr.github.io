@@ -1,0 +1,107 @@
+<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Pré-test – Séquence 4</title>
+<style>
+body{font-family:Arial,sans-serif;margin:0;padding:20px;background:#f5f7fa;color:#222}
+.container{max-width:1000px;margin:auto}
+h1{text-align:center;color:#1f4e79}
+h2,h3{color:#1f4e79}
+.card{background:#fff;border-radius:12px;padding:18px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.identity-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+label{font-weight:bold;color:#1f4e79}
+input,select,textarea{width:100%;padding:10px;margin-top:6px;border:1px solid #bbb;border-radius:7px;font-size:15px;box-sizing:border-box}
+textarea{min-height:100px}
+.q{border:1px solid #d4dce3;border-radius:10px;padding:14px;margin:12px 0}
+.answers label{display:block;color:#222;font-weight:normal;margin:7px 0}
+.answers input{width:auto;margin-right:8px}
+button{border:none;border-radius:8px;padding:12px 18px;font-size:15px;cursor:pointer;margin:8px 8px 8px 0}
+.primary{background:#1f4e79;color:#fff}
+.help{background:#e9eef3;color:#222}
+.hidden{display:none}
+.message{margin-top:12px;padding:12px;border-radius:8px;background:#eef3f7}
+.explanation{margin-top:10px;padding:10px;border-left:4px solid #1f4e79;background:#f7fbff}
+table{width:100%;border-collapse:collapse}
+th,td{border:1px solid #bbb;padding:8px;text-align:center}
+th{background:#e9eef3}
+.small{font-size:13px;color:#555}
+.calc-grid{display:grid;grid-template-columns:160px repeat(4,1fr);gap:8px;align-items:center}
+.calc-grid>div{padding:8px;background:#fff;border:1px solid #d5dce2;border-radius:6px}
+.calc-grid .head{background:#e9eef3;font-weight:bold;text-align:center}
+.dropzones{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:15px}
+.zone{min-height:110px;border:2px dashed #9eaab4;border-radius:10px;padding:12px;background:#fff}
+.token-row{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.token{display:inline-block;padding:9px 12px;border:2px solid #1f4e79;border-radius:8px;background:#fff;cursor:pointer}
+.token.selected{background:#dcecff}.token.placed{opacity:.5}
+@media(max-width:850px){.identity-grid,.dropzones{grid-template-columns:1fr}.calc-grid{grid-template-columns:1fr 1fr}.table-wrap{overflow-x:auto}}
+</style>
+</head><body><div class="container">
+<h1>🧭 Pré-test – Séquence 4</h1>
+<div class="card"><p><strong>Avant de commencer le cours</strong>, répondez aux 5 questions. Aucun score ne vous sera affiché.</p>
+<p>Vous pourrez consulter les explications <strong>après validation</strong>. Les explications demandées seront mémorisées.</p></div>
+<div class="card"><div class="identity-grid">
+<label>Nom<input id="nom"></label><label>Prénom<input id="prenom"></label><label>Groupe<input id="groupe"></label>
+</div></div>
+<div class="card">
+<div class="q"><p><strong>Q1.</strong> Une donnée devient un indicateur lorsqu’elle est mise en relation avec une référence ou une autre donnée.</p>
+<div class="answers"><label><input type="radio" name="pre1" value="Vrai">Vrai</label><label><input type="radio" name="pre1" value="Faux">Faux</label></div>
+<button class="help hidden" data-help="pre1" type="button">Voir l’explication</button>
+<div class="explanation hidden" id="exp-pre1">Oui. Une donnée brute devient réellement utile lorsqu’elle est comparée à une référence.</div></div>
+
+<div class="q"><p><strong>Q2.</strong> La productivité compare principalement :</p>
+<div class="answers"><label><input type="radio" name="pre2" value="A">les heures productives aux heures disponibles</label><label><input type="radio" name="pre2" value="B">les heures vendues aux heures réalisées</label><label><input type="radio" name="pre2" value="C">les heures prévues aux heures réalisées</label></div>
+<button class="help hidden" data-help="pre2" type="button">Voir l’explication</button>
+<div class="explanation hidden" id="exp-pre2">La productivité mesure la part du temps disponible réellement consacrée aux travaux productifs.</div></div>
+
+<div class="q"><p><strong>Q3.</strong> L’efficacité compare principalement :</p>
+<div class="answers"><label><input type="radio" name="pre3" value="A">les heures vendues aux heures disponibles</label><label><input type="radio" name="pre3" value="B">les heures prévues aux heures réalisées</label><label><input type="radio" name="pre3" value="C">les heures réalisées aux heures disponibles</label></div>
+<button class="help hidden" data-help="pre3" type="button">Voir l’explication</button>
+<div class="explanation hidden" id="exp-pre3">L’efficacité compare le temps prévu au temps réellement consommé.</div></div>
+
+<div class="q"><p><strong>Q4.</strong> Le rendement compare principalement :</p>
+<div class="answers"><label><input type="radio" name="pre4" value="A">les heures vendues aux heures réalisées</label><label><input type="radio" name="pre4" value="B">les heures prévues aux heures disponibles</label><label><input type="radio" name="pre4" value="C">les heures réalisées aux heures vendues</label></div>
+<button class="help hidden" data-help="pre4" type="button">Voir l’explication</button>
+<div class="explanation hidden" id="exp-pre4">Le rendement met en relation le temps valorisé au client et le temps réellement passé.</div></div>
+
+<div class="q"><p><strong>Q5.</strong> Un seul indicateur suffit pour juger la performance d’un technicien.</p>
+<div class="answers"><label><input type="radio" name="pre5" value="Vrai">Vrai</label><label><input type="radio" name="pre5" value="Faux">Faux</label></div>
+<button class="help hidden" data-help="pre5" type="button">Voir l’explication</button>
+<div class="explanation hidden" id="exp-pre5">Non. Il faut croiser plusieurs indicateurs et tenir compte du contexte.</div></div>
+
+<button id="validate" class="primary">✅ VALIDER LE PRÉ-TEST</button>
+<div id="msg" class="message hidden"></div>
+<div id="continueBox" class="card hidden" style="margin-top:16px">
+<h3>Pré-test terminé</h3>
+<p>Vous pouvez maintenant commencer la séquence 4.</p>
+<p class="small">Le bouton ci-dessous pourra être relié à votre page Google Sites.</p>
+<button id="continueBtn" class="primary" type="button">➡️ CONTINUER LA SÉQUENCE</button>
+</div></div>
+</div>
+<script>
+const key={pre1:"Vrai",pre2:"A",pre3:"B",pre4:"A",pre5:"Faux"};
+let help=[];
+function radio(n){const e=document.querySelector('input[name="'+n+'"]:checked');return e?e.value:null}
+function all(){for(let i=1;i<=5;i++)if(!radio("pre"+i))return false;return true}
+function score(){let s=0;for(let i=1;i<=5;i++)if(radio("pre"+i)===key["pre"+i])s++;return s}
+document.getElementById("validate").addEventListener("click",()=>{
+ const nom=document.getElementById("nom").value.trim(),prenom=document.getElementById("prenom").value.trim(),groupe=document.getElementById("groupe").value.trim();
+ if(!nom||!prenom||!groupe){alert("Renseignez nom, prénom et groupe.");return}
+ if(!all()){alert("Répondez aux 5 questions.");return}
+ const s=score();
+ for(let i=1;i<=5;i++)document.querySelectorAll('input[name="pre'+i+'"]').forEach(x=>x.disabled=true);
+ document.querySelectorAll(".help").forEach(b=>b.classList.remove("hidden"));
+ localStorage.setItem("s4_pretest_done","1");
+ localStorage.setItem("s4_nom",nom);localStorage.setItem("s4_prenom",prenom);localStorage.setItem("s4_groupe",groupe);
+ localStorage.setItem("s4_pre_score",String(s));
+ document.getElementById("validate").disabled=true;
+ document.getElementById("msg").classList.remove("hidden");
+ document.getElementById("msg").innerHTML="<strong>Pré-test enregistré.</strong> Aucun score n'est affiché.";
+ document.getElementById("continueBox").classList.remove("hidden");
+});
+document.querySelectorAll(".help").forEach(btn=>btn.addEventListener("click",()=>{
+ const k=btn.dataset.help;document.getElementById("exp-"+k).classList.remove("hidden");
+ const q=k.replace("pre","Q");if(!help.includes(q))help.push(q);
+ localStorage.setItem("s4_pre_help",help.join(","));
+}));
+document.getElementById("continueBtn").addEventListener("click",()=>{
+ alert("Pré-test validé. Nous relierons ce bouton à la page Séquence 4 de Google Sites lors de l'intégration.");
+});
+</script></body></html>
