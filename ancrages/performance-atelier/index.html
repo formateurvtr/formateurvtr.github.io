@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ancrage – Performance de l'atelier</title>
+<style>
+body{font-family:Arial,sans-serif;margin:0;padding:20px;background:#f5f7fa;color:#222}
+.container{max-width:1200px;margin:auto} h1{text-align:center;color:#1f4e79}
+h2,h3{color:#1f4e79}.card{background:#fff;border-radius:12px;padding:18px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.identity-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+label{font-weight:bold;color:#1f4e79} input,select,textarea{width:100%;padding:10px;margin-top:6px;border:1px solid #bbb;border-radius:7px;font-size:15px;box-sizing:border-box}
+textarea{min-height:100px}.q{border:1px solid #d4dce3;border-radius:10px;padding:14px;margin:12px 0}
+.answers label{display:block;color:#222;font-weight:normal;margin:7px 0}.answers input{width:auto;margin-right:8px}
+button{border:none;border-radius:8px;padding:12px 18px;font-size:15px;cursor:pointer;margin:8px 8px 8px 0}
+.primary{background:#1f4e79;color:white}.help{background:#e9eef3}.hidden{display:none}.message{margin-top:12px;padding:12px;border-radius:8px;background:#eef3f7}
+.explanation{margin-top:10px;padding:10px;border-left:4px solid #1f4e79;background:#f7fbff}
+table{width:100%;border-collapse:collapse}th,td{border:1px solid #bbb;padding:8px;text-align:center}th{background:#e9eef3}
+.calc-grid{display:grid;grid-template-columns:160px repeat(4,1fr);gap:8px;align-items:center}.calc-grid>div{padding:8px;background:#fff;border:1px solid #d5dce2;border-radius:6px}
+.calc-grid .head{background:#e9eef3;font-weight:bold;text-align:center}
+.dropzones{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:15px}.zone{min-height:110px;border:2px dashed #9eaab4;border-radius:10px;padding:12px;background:#fff}
+.token-row{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.token{display:inline-block;padding:9px 12px;border:2px solid #1f4e79;border-radius:8px;background:#fff;cursor:pointer}
+.token.selected{background:#dcecff}.token.placed{opacity:.5}.small{font-size:13px;color:#555}
+@media(max-width:850px){.identity-grid,.dropzones{grid-template-columns:1fr}.calc-grid{grid-template-columns:1fr 1fr}.table-wrap{overflow-x:auto}}
+</style>
+</head>
+<body><div class="container">
+<h1>🎮 Ancrage – Pilotez la performance de votre atelier</h1>
+<div class="card"><p><strong>Vous êtes responsable d’un atelier poids lourds.</strong></p><p>La journée est terminée. Analysez les résultats de l’équipe avant de prendre une décision.</p></div>
+
+<h2>🪪 Identification</h2>
+<div class="card"><div class="identity-grid">
+<label>Nom<input id="nom" type="text"></label>
+<label>Prénom<input id="prenom" type="text"></label>
+<label>Groupe<input id="groupe" type="text"></label>
+</div></div>
+
+<h2>1️⃣ Questionnaire AVANT</h2>
+<div class="card" id="preCard">
+<p><strong>Répondez sans consulter le cours.</strong> Aucun score ne sera affiché.</p>
+<div class="q"><p><strong>Q1.</strong> Une donnée devient un indicateur lorsqu’elle est mise en relation avec une référence ou une autre donnée.</p><div class="answers"><label><input type="radio" name="pre1" value="Vrai">Vrai</label><label><input type="radio" name="pre1" value="Faux">Faux</label></div><button class="help hidden" data-help="pre1">Voir l’explication</button><div class="explanation hidden" id="exp-pre1">Oui. Une donnée brute devient utile lorsqu’elle est comparée à une référence.</div></div>
+<div class="q"><p><strong>Q2.</strong> La productivité compare principalement :</p><div class="answers"><label><input type="radio" name="pre2" value="A">les heures productives aux heures disponibles</label><label><input type="radio" name="pre2" value="B">les heures vendues aux heures réalisées</label><label><input type="radio" name="pre2" value="C">les heures prévues aux heures réalisées</label></div><button class="help hidden" data-help="pre2">Voir l’explication</button><div class="explanation hidden" id="exp-pre2">La productivité mesure la part du temps disponible réellement consacrée aux travaux productifs.</div></div>
+<div class="q"><p><strong>Q3.</strong> L’efficacité compare principalement :</p><div class="answers"><label><input type="radio" name="pre3" value="A">les heures vendues aux heures disponibles</label><label><input type="radio" name="pre3" value="B">les heures prévues aux heures réalisées</label><label><input type="radio" name="pre3" value="C">les heures réalisées aux heures disponibles</label></div><button class="help hidden" data-help="pre3">Voir l’explication</button><div class="explanation hidden" id="exp-pre3">L’efficacité permet de savoir si le travail a été réalisé dans le temps prévu.</div></div>
+<div class="q"><p><strong>Q4.</strong> Le rendement compare principalement :</p><div class="answers"><label><input type="radio" name="pre4" value="A">les heures vendues aux heures réalisées</label><label><input type="radio" name="pre4" value="B">les heures prévues aux heures disponibles</label><label><input type="radio" name="pre4" value="C">les heures réalisées aux heures vendues</label></div><button class="help hidden" data-help="pre4">Voir l’explication</button><div class="explanation hidden" id="exp-pre4">Le rendement compare le temps valorisé au client au temps réellement passé.</div></div>
+<div class="q"><p><strong>Q5.</strong> Un seul indicateur suffit pour juger la performance d’un technicien.</p><div class="answers"><label><input type="radio" name="pre5" value="Vrai">Vrai</label><label><input type="radio" name="pre5" value="Faux">Faux</label></div><button class="help hidden" data-help="pre5">Voir l’explication</button><div class="explanation hidden" id="exp-pre5">Non. Il faut croiser plusieurs indicateurs et tenir compte du contexte.</div></div>
+<button id="validatePre" class="primary">✅ VALIDER MES RÉPONSES</button><div id="preMsg" class="message hidden"></div>
+</div>
+
+<div id="mission" class="hidden">
+<h2>2️⃣ Mission atelier</h2>
+<div class="card table-wrap"><table>
+<tr><th>Technicien</th><th>Disponibles</th><th>Prévues</th><th>Réalisées</th><th>Vendues</th></tr>
+<tr><td>Thomas</td><td>8</td><td>7</td><td>7,5</td><td>6,5</td></tr>
+<tr><td>Lucas</td><td>8</td><td>8</td><td>7</td><td>8</td></tr>
+<tr><td>Mehdi</td><td>8</td><td>7,5</td><td>7,5</td><td>7</td></tr>
+<tr><td>Paul</td><td>8</td><td>6</td><td>6,5</td><td>7</td></tr>
+<tr><th>Atelier</th><th>32</th><th>28,5</th><th>28,5</th><th>28,5</th></tr>
+</table></div>
+
+<h2>3️⃣ Calculez les indicateurs</h2>
+<div class="card">
+<h3>Productivité = heures réalisées ÷ heures disponibles × 100</h3><div class="calc-grid" id="prodGrid"></div>
+<h3>Efficacité = heures prévues ÷ heures réalisées × 100</h3><div class="calc-grid" id="effGrid"></div>
+<h3>Rendement = heures vendues ÷ heures réalisées × 100</h3><div class="calc-grid" id="rendGrid"></div>
+<button id="checkCalc" class="primary">🔎 VÉRIFIER MES CALCULS</button><div id="calcMsg" class="message hidden"></div>
+</div>
+
+<h2>4️⃣ Mini-jeu – Classez les rendements</h2>
+<div class="card">
+<p>Sélectionnez un technicien, puis cliquez sur la zone correspondant à son rendement.</p>
+<div class="token-row" id="tokens"></div>
+<div class="dropzones"><div class="zone" data-zone="lt"><h4>&lt; 100 %</h4></div><div class="zone" data-zone="eq"><h4>= 100 %</h4></div><div class="zone" data-zone="gt"><h4>&gt; 100 %</h4></div></div>
+<button id="checkClass" class="primary">✅ VÉRIFIER LE CLASSEMENT</button><div id="classMsg" class="message hidden"></div>
+</div>
+
+<h2>5️⃣ Décision de chef d’atelier</h2>
+<div class="card">
+<p><strong>Quel technicien nécessite selon vous une attention particulière ?</strong></p>
+<p class="small">Votre justification doit croiser plusieurs indicateurs.</p>
+<label>Technicien choisi<select id="decisionTech"><option value="">-- Choisir --</option><option>Thomas</option><option>Lucas</option><option>Mehdi</option><option>Paul</option></select></label>
+<label style="display:block;margin-top:14px">Justification<textarea id="justification"></textarea></label>
+</div>
+
+<h2>6️⃣ Questionnaire APRÈS</h2>
+<div class="card">
+<p>Répondez à nouveau aux mêmes questions. Aucun score ne sera affiché.</p>
+<div class="q"><p><strong>Q1.</strong> Une donnée devient un indicateur lorsqu’elle est mise en relation avec une référence ou une autre donnée.</p><div class="answers"><label><input type="radio" name="post1" value="Vrai">Vrai</label><label><input type="radio" name="post1" value="Faux">Faux</label></div><button class="help hidden" data-help="post1">Voir l’explication</button><div class="explanation hidden" id="exp-post1">Oui. L’indicateur donne du sens à la donnée grâce à une comparaison.</div></div>
+<div class="q"><p><strong>Q2.</strong> La productivité compare principalement :</p><div class="answers"><label><input type="radio" name="post2" value="A">les heures productives aux heures disponibles</label><label><input type="radio" name="post2" value="B">les heures vendues aux heures réalisées</label><label><input type="radio" name="post2" value="C">les heures prévues aux heures réalisées</label></div><button class="help hidden" data-help="post2">Voir l’explication</button><div class="explanation hidden" id="exp-post2">La productivité met en relation le temps productif et le temps disponible.</div></div>
+<div class="q"><p><strong>Q3.</strong> L’efficacité compare principalement :</p><div class="answers"><label><input type="radio" name="post3" value="A">les heures vendues aux heures disponibles</label><label><input type="radio" name="post3" value="B">les heures prévues aux heures réalisées</label><label><input type="radio" name="post3" value="C">les heures réalisées aux heures disponibles</label></div><button class="help hidden" data-help="post3">Voir l’explication</button><div class="explanation hidden" id="exp-post3">L’efficacité compare la référence prévue au temps réellement consommé.</div></div>
+<div class="q"><p><strong>Q4.</strong> Le rendement compare principalement :</p><div class="answers"><label><input type="radio" name="post4" value="A">les heures vendues aux heures réalisées</label><label><input type="radio" name="post4" value="B">les heures prévues aux heures disponibles</label><label><input type="radio" name="post4" value="C">les heures réalisées aux heures vendues</label></div><button class="help hidden" data-help="post4">Voir l’explication</button><div class="explanation hidden" id="exp-post4">Le rendement compare ce qui est valorisé au client avec le temps réellement passé.</div></div>
+<div class="q"><p><strong>Q5.</strong> Un seul indicateur suffit pour juger la performance d’un technicien.</p><div class="answers"><label><input type="radio" name="post5" value="Vrai">Vrai</label><label><input type="radio" name="post5" value="Faux">Faux</label></div><button class="help hidden" data-help="post5">Voir l’explication</button><div class="explanation hidden" id="exp-post5">Non. Les indicateurs doivent être croisés et interprétés dans leur contexte.</div></div>
+<button id="finishAll" class="primary">✅ TERMINER L’ANCRAGE</button><div id="finalMsg" class="message hidden"></div>
+</div>
+</div></div>
+
+<script>
+const people={Thomas:{dispo:8,prevu:7,realise:7.5,vendu:6.5},Lucas:{dispo:8,prevu:8,realise:7,vendu:8},Mehdi:{dispo:8,prevu:7.5,realise:7.5,vendu:7},Paul:{dispo:8,prevu:6,realise:6.5,vendu:7}};
+const key={pre1:"Vrai",pre2:"A",pre3:"B",pre4:"A",pre5:"Faux",post1:"Vrai",post2:"A",post3:"B",post4:"A",post5:"Faux"};
+let preScore=null,postScore=null,preHelp=[],postHelp=[],selectedToken=null,classPlacement={},calcResults={productivite:{},efficacite:{},rendement:{}};
+
+function radio(name){const e=document.querySelector('input[name="'+name+'"]:checked');return e?e.value:null}
+function all(prefix){for(let i=1;i<=5;i++)if(!radio(prefix+i))return false;return true}
+function score(prefix){let s=0;for(let i=1;i<=5;i++)if(radio(prefix+i)===key[prefix+i])s++;return s}
+function reveal(prefix){for(let i=1;i<=5;i++){const b=document.querySelector('[data-help="'+prefix+i+'"]');if(b)b.classList.remove("hidden")}}
+function lock(prefix){for(let i=1;i<=5;i++)document.querySelectorAll('input[name="'+prefix+i+'"]').forEach(x=>x.disabled=true)}
+document.querySelectorAll(".help").forEach(btn=>btn.addEventListener("click",()=>{const k=btn.dataset.help;document.getElementById("exp-"+k).classList.remove("hidden");const list=k.startsWith("pre")?preHelp:postHelp;const q=k.replace("pre","Q").replace("post","Q");if(!list.includes(q))list.push(q)}));
+
+document.getElementById("validatePre").addEventListener("click",()=>{
+ const nom=document.getElementById("nom").value.trim(),prenom=document.getElementById("prenom").value.trim(),groupe=document.getElementById("groupe").value.trim();
+ if(!nom||!prenom||!groupe){alert("Renseignez votre nom, prénom et groupe.");return}
+ if(!all("pre")){alert("Répondez aux 5 questions.");return}
+ preScore=score("pre");lock("pre");reveal("pre");
+ const m=document.getElementById("preMsg");m.classList.remove("hidden");m.innerHTML="<strong>Questionnaire enregistré.</strong><br>Vous pouvez consulter les explications si vous le souhaitez. Aucun score n’est affiché.";
+ document.getElementById("validatePre").disabled=true;document.getElementById("mission").classList.remove("hidden");document.getElementById("mission").scrollIntoView({behavior:"smooth"});
+});
+
+function buildGrid(id,type){const g=document.getElementById(id);["Technicien","Thomas","Lucas","Mehdi","Paul"].forEach(h=>{const d=document.createElement("div");d.className="head";d.textContent=h;g.appendChild(d)});const l=document.createElement("div");l.className="head";l.textContent="Résultat (%)";g.appendChild(l);Object.keys(people).forEach(n=>{const w=document.createElement("div"),i=document.createElement("input");i.type="number";i.step="0.1";i.id=type+"-"+n;i.placeholder="%";w.appendChild(i);g.appendChild(w)})}
+buildGrid("prodGrid","prod");buildGrid("effGrid","eff");buildGrid("rendGrid","rend");
+
+function expected(type,n){const p=people[n];if(type==="prod")return p.realise/p.dispo*100;if(type==="eff")return p.prevu/p.realise*100;return p.vendu/p.realise*100}
+document.getElementById("checkCalc").addEventListener("click",()=>{let total=0,okc=0,missing=false;[["prod","productivite"],["eff","efficacite"],["rend","rendement"]].forEach(([t,k])=>Object.keys(people).forEach(n=>{const inp=document.getElementById(t+"-"+n),v=parseFloat(inp.value.replace(",","."));if(Number.isNaN(v)){missing=true;inp.style.borderColor="#b02a37";return}total++;calcResults[k][n]=v;const ok=Math.abs(v-expected(t,n))<=0.2;inp.style.borderColor=ok?"#2e7d32":"#b02a37";if(ok)okc++}));const m=document.getElementById("calcMsg");m.classList.remove("hidden");m.innerHTML=missing?"Complétez tous les calculs.":okc===total?"<strong>✅ Tous les calculs sont cohérents.</strong>":"<strong>"+okc+" calcul(s) juste(s) sur "+total+".</strong> Reprenez les cases signalées."});
+
+function renderTokens(){const s=document.getElementById("tokens");s.innerHTML="";Object.keys(people).forEach(n=>{if(!classPlacement[n]){const t=document.createElement("span");t.className="token";t.textContent=n;t.addEventListener("click",()=>{document.querySelectorAll(".token").forEach(x=>x.classList.remove("selected"));t.classList.add("selected");selectedToken=n});s.appendChild(t)}});document.querySelectorAll(".zone").forEach(z=>{z.querySelectorAll(".token").forEach(x=>x.remove());Object.entries(classPlacement).forEach(([n,v])=>{if(v===z.dataset.zone){const t=document.createElement("span");t.className="token placed";t.textContent=n;t.addEventListener("click",e=>{e.stopPropagation();delete classPlacement[n];renderTokens()});z.appendChild(t)}})})}
+document.querySelectorAll(".zone").forEach(z=>z.addEventListener("click",()=>{if(!selectedToken)return;classPlacement[selectedToken]=z.dataset.zone;selectedToken=null;renderTokens()}));renderTokens();
+
+document.getElementById("checkClass").addEventListener("click",()=>{const ez={Thomas:"lt",Lucas:"gt",Mehdi:"lt",Paul:"gt"},m=document.getElementById("classMsg");m.classList.remove("hidden");if(Object.keys(classPlacement).length<4){m.textContent="Classez les quatre techniciens.";return}let k=0;Object.keys(ez).forEach(n=>{if(classPlacement[n]===ez[n])k++});m.innerHTML=k===4?"<strong>✅ Classement cohérent.</strong><br>Un rendement supérieur à 100 % ne suffit pas à dire qu’un technicien est meilleur.":"<strong>"+k+"/4 bien classés.</strong><br>Reprenez vos calculs."});
+
+document.getElementById("finishAll").addEventListener("click",()=>{const tech=document.getElementById("decisionTech").value,just=document.getElementById("justification").value.trim();if(!tech){alert("Choisissez un technicien.");return}if(just.length<30){alert("Développez davantage votre justification.");return}if(!all("post")){alert("Répondez aux 5 questions après.");return}postScore=score("post");lock("post");reveal("post");const m=document.getElementById("finalMsg");m.classList.remove("hidden");m.innerHTML="<strong>✅ Ancrage terminé.</strong><br><br>Aucun score n’est affiché. Vous pouvez consulter les explications si vous le souhaitez.";document.getElementById("finishAll").disabled=true;console.log({nom:document.getElementById("nom").value.trim(),prenom:document.getElementById("prenom").value.trim(),groupe:document.getElementById("groupe").value.trim(),preScore,preHelp,postScore,postHelp,evolution:postScore-preScore,calcResults,decision:tech,justification:just})});
+</script>
+</body></html>
