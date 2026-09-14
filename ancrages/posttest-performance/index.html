@@ -1,0 +1,87 @@
+<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Test final – Séquence 4</title>
+<style>
+body{font-family:Arial,sans-serif;margin:0;padding:20px;background:#f5f7fa;color:#222}
+.container{max-width:1000px;margin:auto}
+h1{text-align:center;color:#1f4e79}
+h2,h3{color:#1f4e79}
+.card{background:#fff;border-radius:12px;padding:18px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.identity-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+label{font-weight:bold;color:#1f4e79}
+input,select,textarea{width:100%;padding:10px;margin-top:6px;border:1px solid #bbb;border-radius:7px;font-size:15px;box-sizing:border-box}
+textarea{min-height:100px}
+.q{border:1px solid #d4dce3;border-radius:10px;padding:14px;margin:12px 0}
+.answers label{display:block;color:#222;font-weight:normal;margin:7px 0}
+.answers input{width:auto;margin-right:8px}
+button{border:none;border-radius:8px;padding:12px 18px;font-size:15px;cursor:pointer;margin:8px 8px 8px 0}
+.primary{background:#1f4e79;color:#fff}
+.help{background:#e9eef3;color:#222}
+.hidden{display:none}
+.message{margin-top:12px;padding:12px;border-radius:8px;background:#eef3f7}
+.explanation{margin-top:10px;padding:10px;border-left:4px solid #1f4e79;background:#f7fbff}
+table{width:100%;border-collapse:collapse}
+th,td{border:1px solid #bbb;padding:8px;text-align:center}
+th{background:#e9eef3}
+.small{font-size:13px;color:#555}
+.calc-grid{display:grid;grid-template-columns:160px repeat(4,1fr);gap:8px;align-items:center}
+.calc-grid>div{padding:8px;background:#fff;border:1px solid #d5dce2;border-radius:6px}
+.calc-grid .head{background:#e9eef3;font-weight:bold;text-align:center}
+.dropzones{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:15px}
+.zone{min-height:110px;border:2px dashed #9eaab4;border-radius:10px;padding:12px;background:#fff}
+.token-row{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.token{display:inline-block;padding:9px 12px;border:2px solid #1f4e79;border-radius:8px;background:#fff;cursor:pointer}
+.token.selected{background:#dcecff}.token.placed{opacity:.5}
+@media(max-width:850px){.identity-grid,.dropzones{grid-template-columns:1fr}.calc-grid{grid-template-columns:1fr 1fr}.table-wrap{overflow-x:auto}}
+</style>
+</head><body><div class="container">
+<div id="blocked" class="card hidden"><h1>🔒 Test final verrouillé</h1><p>Le test final est accessible uniquement après le pré-test et l’activité Performance Atelier.</p></div>
+<div id="test" class="hidden"><h1>🏁 Test final – Séquence 4</h1>
+<div class="card"><p>Répondez aux mêmes 5 questions. Aucun score ne sera affiché.</p></div>
+<div class="card">
+<div class="q"><p><strong>Q1.</strong> Une donnée devient un indicateur lorsqu’elle est mise en relation avec une référence ou une autre donnée.</p>
+<div class="answers"><label><input type="radio" name="post1" value="Vrai">Vrai</label><label><input type="radio" name="post1" value="Faux">Faux</label></div>
+<button class="help hidden" data-help="post1" type="button">Voir l’explication</button>
+<div class="explanation hidden" id="exp-post1">Oui. Une donnée brute devient réellement utile lorsqu’elle est comparée à une référence.</div></div>
+
+<div class="q"><p><strong>Q2.</strong> La productivité compare principalement :</p>
+<div class="answers"><label><input type="radio" name="post2" value="A">les heures productives aux heures disponibles</label><label><input type="radio" name="post2" value="B">les heures vendues aux heures réalisées</label><label><input type="radio" name="post2" value="C">les heures prévues aux heures réalisées</label></div>
+<button class="help hidden" data-help="post2" type="button">Voir l’explication</button>
+<div class="explanation hidden" id="exp-post2">La productivité mesure la part du temps disponible réellement consacrée aux travaux productifs.</div></div>
+
+<div class="q"><p><strong>Q3.</strong> L’efficacité compare principalement :</p>
+<div class="answers"><label><input type="radio" name="post3" value="A">les heures vendues aux heures disponibles</label><label><input type="radio" name="post3" value="B">les heures prévues aux heures réalisées</label><label><input type="radio" name="post3" value="C">les heures réalisées aux heures disponibles</label></div>
+<button class="help hidden" data-help="post3" type="button">Voir l’explication</button>
+<div class="explanation hidden" id="exp-post3">L’efficacité compare le temps prévu au temps réellement consommé.</div></div>
+
+<div class="q"><p><strong>Q4.</strong> Le rendement compare principalement :</p>
+<div class="answers"><label><input type="radio" name="post4" value="A">les heures vendues aux heures réalisées</label><label><input type="radio" name="post4" value="B">les heures prévues aux heures disponibles</label><label><input type="radio" name="post4" value="C">les heures réalisées aux heures vendues</label></div>
+<button class="help hidden" data-help="post4" type="button">Voir l’explication</button>
+<div class="explanation hidden" id="exp-post4">Le rendement met en relation le temps valorisé au client et le temps réellement passé.</div></div>
+
+<div class="q"><p><strong>Q5.</strong> Un seul indicateur suffit pour juger la performance d’un technicien.</p>
+<div class="answers"><label><input type="radio" name="post5" value="Vrai">Vrai</label><label><input type="radio" name="post5" value="Faux">Faux</label></div>
+<button class="help hidden" data-help="post5" type="button">Voir l’explication</button>
+<div class="explanation hidden" id="exp-post5">Non. Il faut croiser plusieurs indicateurs et tenir compte du contexte.</div></div>
+
+<button id="finish" class="primary">✅ TERMINER LE TEST FINAL</button><div id="msg" class="message hidden"></div></div>
+</div></div>
+<script>
+const key={post1:"Vrai",post2:"A",post3:"B",post4:"A",post5:"Faux"};
+let help=[];
+const allowed=localStorage.getItem("s4_pretest_done")==="1"&&localStorage.getItem("s4_activity_done")==="1";
+document.getElementById(allowed?"test":"blocked").classList.remove("hidden");
+function r(n){const e=document.querySelector('input[name="'+n+'"]:checked');return e?e.value:null}
+function all(){for(let i=1;i<=5;i++)if(!r("post"+i))return false;return true}
+function score(){let s=0;for(let i=1;i<=5;i++)if(r("post"+i)===key["post"+i])s++;return s}
+document.getElementById("finish").addEventListener("click",()=>{
+ if(!all()){alert("Répondez aux 5 questions.");return}
+ const s=score();for(let i=1;i<=5;i++)document.querySelectorAll('input[name="post'+i+'"]').forEach(x=>x.disabled=true);
+ document.querySelectorAll(".help").forEach(b=>b.classList.remove("hidden"));
+ localStorage.setItem("s4_post_score",String(s));localStorage.setItem("s4_posttest_done","1");
+ const pre=Number(localStorage.getItem("s4_pre_score")||0);
+ localStorage.setItem("s4_evolution",String(s-pre));
+ const m=document.getElementById("msg");m.classList.remove("hidden");m.innerHTML="<strong>Test final terminé.</strong><br>Aucun score n'est affiché. Vous pouvez consulter les explications si vous le souhaitez.";
+ document.getElementById("finish").disabled=true;
+});
+document.querySelectorAll(".help").forEach(btn=>btn.addEventListener("click",()=>{const k=btn.dataset.help;document.getElementById("exp-"+k).classList.remove("hidden");const q=k.replace("post","Q");if(!help.includes(q))help.push(q);localStorage.setItem("s4_post_help",help.join(","));}));
+</script></body></html>
