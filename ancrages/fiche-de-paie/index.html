@@ -232,16 +232,37 @@
 
     try {
       if (APPS_SCRIPT_URL.trim() !== "") {
-        const body = new URLSearchParams();
-        Object.entries(payload).forEach(([key, value]) => body.append(key, value));
 
-        await fetch(APPS_SCRIPT_URL, {
-          method: "POST",
-          mode: "no-cors",
-          body: body
-        });
-      } else {
-        console.log("Mode test local - données non envoyées :", payload);
+  const iframe = document.createElement("iframe");
+  iframe.name = "envoi_apps_script";
+  iframe.style.display = "none";
+  document.body.appendChild(iframe);
+
+  const formPost = document.createElement("form");
+  formPost.method = "POST";
+  formPost.action = APPS_SCRIPT_URL;
+  formPost.target = "envoi_apps_script";
+  formPost.style.display = "none";
+
+  Object.entries(payload).forEach(([key, value]) => {
+    const input = document.createElement("input");
+    input.type = "hidden";
+    input.name = key;
+    input.value = value;
+    formPost.appendChild(input);
+  });
+
+  document.body.appendChild(formPost);
+  formPost.submit();
+
+  setTimeout(() => {
+    formPost.remove();
+    iframe.remove();
+  }, 3000);
+
+} else {
+  console.log("Mode test local - données non envoyées :", payload);
+}
       }
 
       message.textContent = "✅ Test enregistré. Vous pouvez maintenant commencer la séquence.";
