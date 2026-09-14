@@ -6,125 +6,48 @@
   <title>Test d'entrée – La fiche de paie</title>
   <style>
     * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: #f4f7fb;
-      color: #1f2937;
-      line-height: 1.5;
-    }
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 24px 16px 48px;
-    }
-    .card {
-      background: white;
-      border-radius: 18px;
-      padding: 24px;
-      box-shadow: 0 8px 24px rgba(0,0,0,.08);
-      margin-bottom: 18px;
-    }
-    h1 {
-      margin-top: 0;
-      font-size: 2rem;
-      color: #0f4c81;
-    }
-    h2 {
-      font-size: 1.15rem;
-      margin: 0 0 12px;
-    }
-    .intro {
-      background: #eaf3fb;
-      border-left: 5px solid #0f4c81;
-    }
-    label.identity {
-      display: block;
-      font-weight: 700;
-      margin-top: 12px;
-    }
-    input[type="text"] {
-      width: 100%;
-      padding: 12px;
-      margin-top: 6px;
-      border: 1px solid #cbd5e1;
-      border-radius: 10px;
-      font-size: 1rem;
-    }
-    .question {
-      margin: 0 0 10px;
-      font-weight: 700;
-    }
-    .answer {
-      display: block;
-      padding: 9px 10px;
-      border-radius: 9px;
-      margin: 5px 0;
-      cursor: pointer;
-    }
-    .answer:hover {
-      background: #f1f5f9;
-    }
-    input[type="radio"] {
-      margin-right: 8px;
-      transform: scale(1.1);
-    }
-    button {
-      width: 100%;
-      border: 0;
-      border-radius: 12px;
-      padding: 14px 18px;
-      font-size: 1.05rem;
-      font-weight: 700;
-      background: #0f4c81;
-      color: white;
-      cursor: pointer;
-    }
-    button:hover { opacity: .92; }
-    button:disabled { opacity: .5; cursor: not-allowed; }
-    .message {
-      margin-top: 16px;
-      padding: 14px;
-      border-radius: 10px;
-      display: none;
-      font-weight: 700;
-    }
-    .success {
-      display: block;
-      background: #e8f7ee;
-      color: #166534;
-      border: 1px solid #bbf7d0;
-    }
-    .error {
-      display: block;
-      background: #fff1f2;
-      color: #9f1239;
-      border: 1px solid #fecdd3;
-    }
-    .small {
-      font-size: .92rem;
-      color: #475569;
-    }
+    body { margin:0; font-family:Arial,Helvetica,sans-serif; background:#f4f7fb; color:#1f2937; line-height:1.5; }
+    .container { max-width:900px; margin:0 auto; padding:24px 16px 48px; }
+    .card { background:white; border-radius:18px; padding:24px; box-shadow:0 8px 24px rgba(0,0,0,.08); margin-bottom:18px; }
+    h1 { margin-top:0; font-size:2rem; color:#0f4c81; }
+    h2 { font-size:1.15rem; margin:0 0 12px; }
+    .intro { background:#eaf3fb; border-left:5px solid #0f4c81; }
+    label.identity { display:block; font-weight:700; margin-top:12px; }
+    input[type="text"] { width:100%; padding:12px; margin-top:6px; border:1px solid #cbd5e1; border-radius:10px; font-size:1rem; }
+    .question { margin:0 0 10px; font-weight:700; }
+    .answer { display:block; padding:9px 10px; border-radius:9px; margin:5px 0; cursor:pointer; }
+    .answer:hover { background:#f1f5f9; }
+    input[type="radio"] { margin-right:8px; transform:scale(1.1); }
+    button { width:100%; border:0; border-radius:12px; padding:14px 18px; font-size:1.05rem; font-weight:700; background:#0f4c81; color:white; cursor:pointer; }
+    button:hover { opacity:.92; }
+    button:disabled { opacity:.5; cursor:not-allowed; }
+    .message { margin-top:16px; padding:14px; border-radius:10px; display:none; font-weight:700; }
+    .success { display:block; background:#e8f7ee; color:#166534; border:1px solid #bbf7d0; }
+    .small { font-size:.92rem; color:#475569; }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="card intro">
       <h1>🧠 Test d'entrée – La fiche de paie</h1>
-      <p>
-        Ce test permet d'évaluer vos connaissances avant de commencer la séquence.
-        Répondez sans rechercher les réponses.
-      </p>
+      <p>Ce test permet d'évaluer vos connaissances avant de commencer la séquence. Répondez sans rechercher les réponses.</p>
       <p><strong>Les bonnes réponses ne seront pas affichées à la fin.</strong></p>
     </div>
 
-    <form id="quizForm">
+    <iframe name="appsScriptFrame" id="appsScriptFrame" style="display:none;"></iframe>
+
+    <form id="quizForm" method="POST" target="appsScriptFrame"
+      action="https://script.google.com/macros/s/AKfycbxtkjxERsQrcyxI23_BwhUFAh1JPhGLgOrO9UIwnvhSw3zL-fUEQi9WPG6i95E16q_g/exec">
+      <input type="hidden" name="type" value="fiche_paie_pre">
+      <input type="hidden" name="theme" value="fiche_de_paie">
+      <input type="hidden" name="score" id="scoreField" value="">
+      <input type="hidden" name="total" value="5">
+      <input type="hidden" name="dateHeure" id="dateHeureField" value="">
+
       <div class="card">
         <h2>Identification</h2>
-
         <label class="identity" for="nom">Nom</label>
         <input type="text" id="nom" name="nom" required autocomplete="family-name">
-
         <label class="identity" for="prenom">Prénom</label>
         <input type="text" id="prenom" name="prenom" required autocomplete="given-name">
       </div>
@@ -169,112 +92,40 @@
       <div class="card">
         <button id="submitBtn" type="submit">Valider mon test d'entrée</button>
         <div id="message" class="message"></div>
-        <p class="small">
-          Votre test sera comparé au test de fin de séquence afin de mesurer votre progression.
-        </p>
+        <p class="small">Votre test sera comparé au test de fin de séquence afin de mesurer votre progression.</p>
       </div>
     </form>
   </div>
 
 <script>
-  /*
-    IMPORTANT :
-    Collez ci-dessous l'URL de votre application web Google Apps Script.
-  */
-  
-  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxtkjxERsQrcyxI23_BwhUFAh1JPhGLgOrO9UIwnvhSw3zL-fUEQi9WPG6i95E16q_g/exec;
-
-  const correctAnswers = {
-    q1: "superieur",
-    q2: "faux",
-    q3: "faux",
-    q4: "superieur",
-    q5: "non"
-  };
-
+  const correctAnswers = { q1:"superieur", q2:"faux", q3:"faux", q4:"superieur", q5:"non" };
   const form = document.getElementById("quizForm");
   const message = document.getElementById("message");
   const submitBtn = document.getElementById("submitBtn");
 
-  form.addEventListener("submit", async function(event) {
-    event.preventDefault();
-
+  form.addEventListener("submit", function(event) {
     if (!form.checkValidity()) {
+      event.preventDefault();
       form.reportValidity();
       return;
     }
 
     const data = new FormData(form);
-
     let score = 0;
     for (const key in correctAnswers) {
       if (data.get(key) === correctAnswers[key]) score++;
     }
 
-    const payload = {
-      type: "fiche_paie_pre",
-  theme: "fiche_de_paie",
-  nom: data.get("nom").trim(),
-  prenom: data.get("prenom").trim(),
-  q1: data.get("q1"),
-  q2: data.get("q2"),
-  q3: data.get("q3"),
-  q4: data.get("q4"),
-  q5: data.get("q5"),
-  score: score,
-  total: 5,
-  dateHeure: new Date().toLocaleString("fr-FR")
-    };
-
+    document.getElementById("scoreField").value = score;
+    document.getElementById("dateHeureField").value = new Date().toLocaleString("fr-FR");
     submitBtn.disabled = true;
-    message.className = "message";
-    message.style.display = "none";
 
-    try {
-      if (APPS_SCRIPT_URL.trim() !== "") {
-
-  const iframe = document.createElement("iframe");
-  iframe.name = "envoi_apps_script";
-  iframe.style.display = "none";
-  document.body.appendChild(iframe);
-
-  const formPost = document.createElement("form");
-  formPost.method = "POST";
-  formPost.action = APPS_SCRIPT_URL;
-  formPost.target = "envoi_apps_script";
-  formPost.style.display = "none";
-
-  Object.entries(payload).forEach(([key, value]) => {
-    const input = document.createElement("input");
-    input.type = "hidden";
-    input.name = key;
-    input.value = value;
-    formPost.appendChild(input);
-  });
-
-  document.body.appendChild(formPost);
-  formPost.submit();
-
-  setTimeout(() => {
-    formPost.remove();
-    iframe.remove();
-  }, 3000);
-
-} else {
-  console.log("Mode test local - données non envoyées :", payload);
-}
-      }
-
-      message.textContent = "✅ Test enregistré. Vous pouvez maintenant commencer la séquence.";
+    setTimeout(function() {
+      message.textContent = "✅ Test envoyé. Vous pouvez maintenant commencer la séquence.";
       message.className = "message success";
-      form.querySelectorAll("input").forEach(el => el.disabled = true);
-      submitBtn.textContent = "Test enregistré";
-    } catch (error) {
-      console.error(error);
-      message.textContent = "❌ Impossible d'enregistrer le test. Prévenez votre enseignant.";
-      message.className = "message error";
-      submitBtn.disabled = false;
-    }
+      form.querySelectorAll("input").forEach(function(el) { el.disabled = true; });
+      submitBtn.textContent = "Test envoyé";
+    }, 700);
   });
 </script>
 </body>
