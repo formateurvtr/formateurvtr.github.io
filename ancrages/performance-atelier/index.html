@@ -102,6 +102,17 @@ th{background:#e9eef3}
 </div>
 </div></div>
 <script>
+const APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbxtkjxERsQrcyxI23_BwhUFAh1JPhGLgOrO9UIwnvhSw3zL-fUEQi9WPG6i95E16q_g/exec";
+
+async function envoyerActivitePerformance(data){
+  const body=new URLSearchParams(data);
+  await fetch(APPS_SCRIPT_URL,{
+    method:"POST",
+    mode:"no-cors",
+    body:body
+  });
+}
+
 const people={Thomas:{dispo:8,prevu:7,realise:7.5,vendu:6.5},Lucas:{dispo:8,prevu:8,realise:7,vendu:8},Mehdi:{dispo:8,prevu:7.5,realise:7.5,vendu:7},Paul:{dispo:8,prevu:6,realise:6.5,vendu:7}};
 if(localStorage.getItem("s4_pretest_done")!=="1")document.getElementById("blocked").classList.remove("hidden");else document.getElementById("app").classList.remove("hidden");
 function grid(id,type){const g=document.getElementById(id);["Technicien","Thomas","Lucas","Mehdi","Paul"].forEach(h=>{const d=document.createElement("div");d.className="head";d.textContent=h;g.appendChild(d)});const l=document.createElement("div");l.className="head";l.textContent="Résultat (%)";g.appendChild(l);Object.keys(people).forEach(n=>{const w=document.createElement("div"),i=document.createElement("input");i.type="number";i.step="0.1";i.id=type+"-"+n;w.appendChild(i);g.appendChild(w)})}
@@ -113,7 +124,7 @@ let selected=null,places={};
 function renderTokens(){const s=document.getElementById("tokens");s.innerHTML="";Object.keys(people).forEach(n=>{if(!places[n]){const t=document.createElement("span");t.className="token";t.textContent=n;t.onclick=()=>{document.querySelectorAll(".token").forEach(x=>x.classList.remove("selected"));t.classList.add("selected");selected=n};s.appendChild(t)}});document.querySelectorAll(".zone").forEach(z=>{z.querySelectorAll(".token").forEach(x=>x.remove());Object.entries(places).forEach(([n,v])=>{if(v===z.dataset.zone){const t=document.createElement("span");t.className="token placed";t.textContent=n;t.onclick=e=>{e.stopPropagation();delete places[n];renderTokens()};z.appendChild(t)}})})}
 document.querySelectorAll(".zone").forEach(z=>z.onclick=()=>{if(selected){places[selected]=z.dataset.zone;selected=null;renderTokens()}});renderTokens();
 document.getElementById("checkClass").onclick=()=>{const exp={Thomas:"lt",Lucas:"gt",Mehdi:"lt",Paul:"gt"},m=document.getElementById("classMsg");m.classList.remove("hidden");let k=0;Object.keys(exp).forEach(n=>{if(places[n]===exp[n])k++});m.textContent=k===4?"Classement cohérent.":"Classement : "+k+"/4 correct.";}
-document.getElementById("validateAnalysis").onclick=()=>{
+document.getElementById("validateAnalysis").onclick=async ()=>{
   const tech=document.getElementById("tech").value;
   const cause=document.getElementById("cause").value;
   const j=document.getElementById("just").value.trim();
@@ -143,21 +154,43 @@ document.getElementById("validateAnalysis").onclick=()=>{
     return;
   }
 
-  localStorage.setItem("s4_activity_done","1");
-  localStorage.setItem("s4_decision",tech);
-  localStorage.setItem("s4_indicateurs",indicateurs.join(", "));
-  localStorage.setItem("s4_cause",cause);
-  localStorage.setItem("s4_justification",j);
+  const btn=document.getElementById("validateAnalysis");
+  btn.disabled=true;
+  btn.textContent="⏳ ENREGISTREMENT...";
 
-  const m=document.getElementById("analysisMsg");
-  m.classList.remove("hidden");
-  m.innerHTML=
-    "<strong>✅ Diagnostic validé.</strong><br>"+
-    "Technicien analysé : <strong>"+tech+"</strong><br>"+
-    "Indicateur(s) : <strong>"+indicateurs.join(", ")+"</strong><br>"+
-    "Hypothèse : <strong>"+cause+"</strong><br><br>"+
-    "Votre analyse est enregistrée. Vous pourrez réaliser le test final après le bloc Rendement.";
+  try{
+    await envoyerActivitePerformance({
+      type:"performance_activity",
+      nom:localStorage.getItem("s4_nom")||"",
+      prenom:localStorage.getItem("s4_prenom")||"",
+      groupe:localStorage.getItem("s4_groupe")||"",
+      diagnosticTechnicien:tech,
+      indicateurs:indicateurs.join(", "),
+      cause:cause,
+      justification:j
+    });
 
-  document.getElementById("validateAnalysis").disabled=true;
+    localStorage.setItem("s4_activity_done","1");
+    localStorage.setItem("s4_decision",tech);
+    localStorage.setItem("s4_indicateurs",indicateurs.join(", "));
+    localStorage.setItem("s4_cause",cause);
+    localStorage.setItem("s4_justification",j);
+
+    const m=document.getElementById("analysisMsg");
+    m.classList.remove("hidden");
+    m.innerHTML=
+      "<strong>✅ Diagnostic enregistré.</strong><br>"+
+      "Technicien analysé : <strong>"+tech+"</strong><br>"+
+      "Indicateur(s) : <strong>"+indicateurs.join(", ")+"</strong><br>"+
+      "Hypothèse : <strong>"+cause+"</strong><br><br>"+
+      "Vous pourrez réaliser le test final après le bloc Rendement.";
+
+    btn.textContent="✅ DIAGNOSTIC ENREGISTRÉ";
+  }catch(e){
+    console.error(e);
+    btn.disabled=false;
+    btn.textContent="🔁 RÉESSAYER L’ENREGISTREMENT";
+    alert("L'enregistrement n'a pas abouti. Réessayez.");
+  }
 }
 </script></body></html>
