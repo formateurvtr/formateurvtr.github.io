@@ -180,10 +180,9 @@
   /*
     IMPORTANT :
     Collez ci-dessous l'URL de votre application web Google Apps Script.
-    Exemple :
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/XXXXXXXXXXXX/exec";
   */
-  https://script.google.com/macros/s/AKfycbxtkjxERsQrcyxI23_BwhUFAh1JPhGLgOrO9UIwnvhSw3zL-fUEQi9WPG6i95E16q_g/exec
+  
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxtkjxERsQrcyxI23_BwhUFAh1JPhGLgOrO9UIwnvhSw3zL-fUEQi9WP66i95E16q_g/exec";
 
   const correctAnswers = {
     q1: "superieur",
@@ -213,18 +212,18 @@
     }
 
     const payload = {
-      typeTest: "entree",
-      theme: "fiche_de_paie",
-      nom: data.get("nom").trim(),
-      prenom: data.get("prenom").trim(),
-      q1: data.get("q1"),
-      q2: data.get("q2"),
-      q3: data.get("q3"),
-      q4: data.get("q4"),
-      q5: data.get("q5"),
-      score: score,
-      total: 5,
-      dateHeure: new Date().toLocaleString("fr-FR")
+      type: "fiche_paie_pre",
+  theme: "fiche_de_paie",
+  nom: data.get("nom").trim(),
+  prenom: data.get("prenom").trim(),
+  q1: data.get("q1"),
+  q2: data.get("q2"),
+  q3: data.get("q3"),
+  q4: data.get("q4"),
+  q5: data.get("q5"),
+  score: score,
+  total: 5,
+  dateHeure: new Date().toLocaleString("fr-FR")
     };
 
     submitBtn.disabled = true;
