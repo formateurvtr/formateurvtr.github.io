@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test de sortie – La fiche de paie</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin:0; font-family:Arial,Helvetica,sans-serif; background:#f4f7fb; color:#1f2937; line-height:1.5; }
+    .container { max-width:900px; margin:0 auto; padding:24px 16px 48px; }
+    .card { background:#fff; border-radius:18px; padding:24px; box-shadow:0 8px 24px rgba(0,0,0,.08); margin-bottom:18px; }
+    h1 { margin-top:0; font-size:2rem; color:#0f4c81; }
+    h2 { font-size:1.15rem; margin:0 0 12px; }
+    .intro { background:#eaf3fb; border-left:5px solid #0f4c81; }
+    label.identity { display:block; font-weight:700; margin-top:12px; }
+    input[type="text"] { width:100%; padding:12px; margin-top:6px; border:1px solid #cbd5e1; border-radius:10px; font-size:1rem; }
+    .question { margin:0 0 10px; font-weight:700; }
+    .answer { display:block; padding:9px 10px; border-radius:9px; margin:5px 0; cursor:pointer; }
+    .answer:hover { background:#f1f5f9; }
+    input[type="radio"] { margin-right:8px; transform:scale(1.1); }
+    button { width:100%; border:0; border-radius:12px; padding:14px 18px; font-size:1.05rem; font-weight:700; background:#0f4c81; color:#fff; cursor:pointer; }
+    button:hover { opacity:.92; }
+    button:disabled { opacity:.5; cursor:not-allowed; }
+    .message { margin-top:16px; padding:14px; border-radius:10px; display:none; font-weight:700; }
+    .success { display:block; background:#e8f7ee; color:#166534; border:1px solid #bbf7d0; }
+    .score { font-size:1.5rem; margin:10px 0 0; color:#0f4c81; font-weight:700; }
+    .correction { display:none; }
+    .corr-item { padding:12px 0; border-bottom:1px solid #e5e7eb; }
+    .corr-item:last-child { border-bottom:0; }
+    .good { font-weight:700; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card intro">
+      <h1>🏁 Test de sortie – La fiche de paie</h1>
+      <p>Vous avez terminé la séquence. Répondez maintenant aux mêmes 5 questions qu'au test d'entrée.</p>
+      <p><strong>Votre score et la correction seront affichés après validation.</strong></p>
+    </div>
+
+    <iframe name="appsScriptFrame" id="appsScriptFrame" style="display:none;"></iframe>
+
+    <form id="quizForm" method="POST" target="appsScriptFrame"
+      action="https://script.google.com/macros/s/AKfycbxtkjxERsQrcyxI23_BwhUFAh1JPhGLgOrO9UIwnvhSw3zL-fUEQi9WPG6i95E16q_g/exec">
+
+      <input type="hidden" name="type" value="fiche_paie_post">
+      <input type="hidden" name="theme" value="fiche_de_paie">
+      <input type="hidden" name="score" id="scoreField" value="">
+      <input type="hidden" name="total" value="5">
+      <input type="hidden" name="dateHeure" id="dateHeureField" value="">
+
+      <div class="card">
+        <h2>Identification</h2>
+        <label class="identity" for="nom">Nom</label>
+        <input type="text" id="nom" name="nom" required autocomplete="family-name">
+        <label class="identity" for="prenom">Prénom</label>
+        <input type="text" id="prenom" name="prenom" required autocomplete="given-name">
+      </div>
+
+      <div class="card">
+        <p class="question">1 — Un salarié reçoit 1 800 € net par mois. Son salaire brut est :</p>
+        <label class="answer"><input type="radio" name="q1" value="inferieur" required> inférieur à 1 800 €</label>
+        <label class="answer"><input type="radio" name="q1" value="egal"> égal à 1 800 €</label>
+        <label class="answer"><input type="radio" name="q1" value="superieur"> supérieur à 1 800 €</label>
+        <label class="answer"><input type="radio" name="q1" value="nspp"> Je ne sais pas</label>
+      </div>
+
+      <div class="card">
+        <p class="question">2 — Un technicien possède un salaire brut mensuel de 2 500 €. Il coûte exactement 2 500 € par mois à son entreprise.</p>
+        <label class="answer"><input type="radio" name="q2" value="vrai" required> Vrai</label>
+        <label class="answer"><input type="radio" name="q2" value="faux"> Faux</label>
+        <label class="answer"><input type="radio" name="q2" value="nspp"> Je ne sais pas</label>
+      </div>
+
+      <div class="card">
+        <p class="question">3 — Les cotisations sociales servent uniquement à diminuer le salaire versé au salarié.</p>
+        <label class="answer"><input type="radio" name="q3" value="vrai" required> Vrai</label>
+        <label class="answer"><input type="radio" name="q3" value="faux"> Faux</label>
+        <label class="answer"><input type="radio" name="q3" value="nspp"> Je ne sais pas</label>
+      </div>
+
+      <div class="card">
+        <p class="question">4 — Le coût employeur d'un salarié est généralement :</p>
+        <label class="answer"><input type="radio" name="q4" value="inferieur" required> inférieur à son salaire brut</label>
+        <label class="answer"><input type="radio" name="q4" value="egal"> égal à son salaire brut</label>
+        <label class="answer"><input type="radio" name="q4" value="superieur"> supérieur à son salaire brut</label>
+        <label class="answer"><input type="radio" name="q4" value="nspp"> Je ne sais pas</label>
+      </div>
+
+      <div class="card">
+        <p class="question">5 — Un technicien représente un coût de 30 € par heure productive pour l'entreprise. L'atelier peut donc facturer 30 € l'heure au client sans faire d'autre calcul.</p>
+        <label class="answer"><input type="radio" name="q5" value="oui" required> Oui</label>
+        <label class="answer"><input type="radio" name="q5" value="non"> Non</label>
+        <label class="answer"><input type="radio" name="q5" value="nspp"> Je ne sais pas</label>
+      </div>
+
+      <div class="card">
+        <button id="submitBtn" type="submit">Valider mon test de sortie</button>
+        <div id="message" class="message"></div>
+        <div id="scoreBox" class="score"></div>
+      </div>
+    </form>
+
+    <div id="correction" class="card correction">
+      <h2>✅ Correction</h2>
+      <div class="corr-item"><div class="good">1 — Réponse : supérieur à 1 800 €</div><div>Le salaire net est obtenu après déduction de certaines cotisations du salaire brut.</div></div>
+      <div class="corr-item"><div class="good">2 — Réponse : Faux</div><div>L'entreprise supporte aussi des cotisations et contributions employeur. Le coût employeur est donc supérieur au salaire brut.</div></div>
+      <div class="corr-item"><div class="good">3 — Réponse : Faux</div><div>Les cotisations participent au financement de différents mécanismes de protection sociale.</div></div>
+      <div class="corr-item"><div class="good">4 — Réponse : supérieur au salaire brut</div><div>Le coût employeur comprend le salaire brut et les cotisations ou contributions dues par l'employeur.</div></div>
+      <div class="corr-item"><div class="good">5 — Réponse : Non</div><div>Le prix de vente doit aussi financer les autres coûts de l'atelier : bâtiment, énergie, outillage, diagnostic, administration, temps non facturables, investissements, etc.</div></div>
+    </div>
+  </div>
+
+<script>
+  const correctAnswers = { q1:"superieur", q2:"faux", q3:"faux", q4:"superieur", q5:"non" };
+
+  const form = document.getElementById("quizForm");
+  const message = document.getElementById("message");
+  const submitBtn = document.getElementById("submitBtn");
+  const scoreBox = document.getElementById("scoreBox");
+  const correction = document.getElementById("correction");
+
+  form.addEventListener("submit", function(event) {
+    if (!form.checkValidity()) {
+      event.preventDefault();
+      form.reportValidity();
+      return;
+    }
+
+    const data = new FormData(form);
+    let score = 0;
+    for (const key in correctAnswers) {
+      if (data.get(key) === correctAnswers[key]) score++;
+    }
+
+    document.getElementById("scoreField").value = score;
+    document.getElementById("dateHeureField").value = new Date().toLocaleString("fr-FR");
+    submitBtn.disabled = true;
+
+    setTimeout(function() {
+      message.textContent = "✅ Test de sortie envoyé.";
+      message.className = "message success";
+      scoreBox.textContent = "Votre score : " + score + " / 5";
+      correction.style.display = "block";
+      form.querySelectorAll("input").forEach(function(el) { el.disabled = true; });
+      submitBtn.textContent = "Test envoyé";
+      correction.scrollIntoView({ behavior:"smooth", block:"start" });
+    }, 700);
+  });
+</script>
+</body>
+</html>
