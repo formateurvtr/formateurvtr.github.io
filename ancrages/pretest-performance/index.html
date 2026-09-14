@@ -76,6 +76,17 @@ th{background:#e9eef3}
 </div></div>
 </div>
 <script>
+const APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbxtkjxERsQrcyxI23_BwhUFAh1JPhGLgOrO9UIwnvhSw3zL-fUEQi9WPG6i95E16q_g/exec";
+
+async function envoyerPreTest(data){
+  const body=new URLSearchParams(data);
+  await fetch(APPS_SCRIPT_URL,{
+    method:"POST",
+    mode:"no-cors",
+    body:body
+  });
+}
+
 const key={pre1:"Vrai",pre2:"A",pre3:"B",pre4:"A",pre5:"Faux"};
 let help=[];
 function radio(n){const e=document.querySelector('input[name="'+n+'"]:checked');return e?e.value:null}
@@ -101,7 +112,35 @@ document.querySelectorAll(".help").forEach(btn=>btn.addEventListener("click",()=
  const q=k.replace("pre","Q");if(!help.includes(q))help.push(q);
  localStorage.setItem("s4_pre_help",help.join(","));
 }));
-document.getElementById("continueBtn").addEventListener("click",()=>{
- alert("Pré-test validé. Nous relierons ce bouton à la page Séquence 4 de Google Sites lors de l'intégration.");
+document.getElementById("continueBtn").addEventListener("click",async ()=>{
+ const nom=localStorage.getItem("s4_nom")||"";
+ const prenom=localStorage.getItem("s4_prenom")||"";
+ const groupe=localStorage.getItem("s4_groupe")||"";
+ const scoreAvant=localStorage.getItem("s4_pre_score")||"";
+ const aidesAvant=localStorage.getItem("s4_pre_help")||"";
+
+ const btn=document.getElementById("continueBtn");
+ btn.disabled=true;
+ btn.textContent="⏳ ENREGISTREMENT...";
+
+ try{
+   await envoyerPreTest({
+     type:"performance_pre",
+     nom:nom,
+     prenom:prenom,
+     groupe:groupe,
+     scoreAvant:scoreAvant,
+     aidesAvant:aidesAvant
+   });
+
+   btn.textContent="✅ PRÉ-TEST ENREGISTRÉ";
+   document.getElementById("msg").innerHTML=
+     "<strong>Pré-test enregistré.</strong><br>Vous pouvez maintenant poursuivre la séquence 4.";
+ }catch(e){
+   console.error(e);
+   btn.disabled=false;
+   btn.textContent="🔁 RÉESSAYER";
+   alert("L'enregistrement n'a pas abouti. Réessayez avant de poursuivre.");
+ }
 });
 </script></body></html>
