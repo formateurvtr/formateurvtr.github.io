@@ -14,6 +14,7 @@
     table{width:100%;border-collapse:collapse;background:#fff} th,td{border:1px solid var(--line);padding:10px;text-align:left} th{background:#dfeef9}
     .measure{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-top:15px}.measure span{background:#fff;border-radius:8px;padding:10px;border:1px solid var(--line)}
     .question{margin:20px 0;padding:18px;border:1px solid var(--line);border-radius:12px;background:#fff}.question label:first-child{display:block;font-weight:700;margin-bottom:10px;color:var(--navy)}
+    .identity{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.identity label{font-weight:700;color:var(--navy)}
     input,textarea,select{width:100%;font:inherit;border:2px solid #9eb3c4;border-radius:8px;padding:10px;background:white} textarea{min-height:105px;resize:vertical} input:focus,textarea:focus,select:focus{outline:3px solid #b8dcf7;border-color:var(--blue)}
     .unit{display:flex;align-items:center;gap:10px}.unit input{max-width:220px}.unit strong{white-space:nowrap}
     .pollutants td:first-child{width:65%}.error{display:none;background:#fff0ee;color:var(--red);border:1px solid #f2b8b5;border-radius:9px;padding:12px;margin:14px 0}.error.show{display:block}
@@ -21,7 +22,7 @@
     button{border:0;border-radius:9px;padding:13px 20px;font-size:17px;font-weight:700;cursor:pointer}.validate{background:var(--blue);color:white}.reset{background:#e5ebef;color:var(--navy);display:none}
     .correction{display:none;margin-top:30px;border-top:5px solid var(--green);padding-top:12px}.correction.show{display:block}.answer{background:#f0faf2;border-left:5px solid var(--green);padding:14px 16px;margin:14px 0;border-radius:0 9px 9px 0}.answer h3{margin:0 0 5px;color:#176c2c}.formula{font-family:Georgia,serif;background:white;padding:8px;border-radius:6px;display:inline-block}.score{font-size:20px;font-weight:700;color:var(--navy)}
     .locked input,.locked textarea,.locked select{background:#eef1f3;color:#425466}.good{border-color:var(--green)!important}.bad{border-color:var(--red)!important}
-    @media(max-width:650px){.pollutants,.pollutants tbody,.pollutants tr,.pollutants td{display:block}.pollutants td:first-child{width:auto;background:#eef6fc;font-weight:700}.actions{flex-direction:column;align-items:stretch}}
+    @media(max-width:650px){.identity{grid-template-columns:1fr}.pollutants,.pollutants tbody,.pollutants tr,.pollutants td{display:block}.pollutants td:first-child{width:auto;background:#eef6fc;font-weight:700}.actions{flex-direction:column;align-items:stretch}}
   </style>
 </head>
 <body><main>
@@ -41,6 +42,12 @@
   </section>
 
   <form id="exercise">
+    <h2>Identification</h2>
+    <div class="question identity">
+      <label>Nom<input id="nom" name="nom" autocomplete="family-name" required></label>
+      <label>Prénom<input id="prenom" name="prenom" autocomplete="given-name" required></label>
+      <label>Groupe<input id="groupe" name="groupe" required></label>
+    </div>
     <h2>Travail demandé</h2>
     <div class="question"><label for="q1">1. Calculez la durée d’un tour de vilebrequin.</label><div class="unit"><input id="q1" type="number" step="any" required><strong>ms</strong></div></div>
     <div class="question"><label for="q2">2. Calculez la durée d’un cycle complet à quatre temps.</label><div class="unit"><input id="q2" type="number" step="any" required><strong>ms</strong></div></div>
@@ -78,6 +85,7 @@
   </section>
 </main>
 <script>
+  const URL_RESULTATS='https://script.google.com/macros/s/AKfycbxtkjxERsQrcyxI23_BwhUFAh1JPhGLgOrO9UIwnvhSw3zL-fUEQi9WPG6i95E16q_g/exec';
   const form=document.getElementById('exercise'), correction=document.getElementById('correction'), error=document.getElementById('error'), reset=document.getElementById('reset');
   const expected={q1:50,q2:100,q3:7,q4:0.97,p1:'NOx',p2:'Suies et particules',p3:'HC imbrûlés',p4:'CO'};
   const close=(a,b,t=.08)=>Math.abs(a-b)<=Math.max(.08,Math.abs(b)*t);
@@ -87,6 +95,7 @@
     error.classList.remove('show'); let good=0,total=8;
     ['q1','q2','q3','q4'].forEach(id=>{const el=document.getElementById(id),ok=close(Number(el.value),expected[id]);el.classList.add(ok?'good':'bad');if(ok)good++});
     ['p1','p2','p3','p4'].forEach(id=>{const el=document.getElementById(id),ok=el.value===expected[id];el.classList.add(ok?'good':'bad');if(ok)good++});
+    envoyerResultat(good,total);
     form.querySelectorAll('input,textarea,select').forEach(el=>el.disabled=true);form.classList.add('locked');
     form.querySelector('.validate').style.display='none';reset.style.display='inline-block';
     document.getElementById('status').textContent='Exercice validé — réponses verrouillées.';
@@ -94,5 +103,17 @@
     correction.classList.add('show');correction.focus();
   });
   reset.addEventListener('click',()=>location.reload());
+  function envoyerResultat(score,total){
+    const donnees=new URLSearchParams();
+    donnees.append('type','combustion_diesel');
+    donnees.append('nom',document.getElementById('nom').value.trim());
+    donnees.append('prenom',document.getElementById('prenom').value.trim());
+    donnees.append('groupe',document.getElementById('groupe').value.trim());
+    donnees.append('activite','Analyse combustion Diesel');
+    donnees.append('score',score);
+    donnees.append('total',total);
+    ['q1','q2','q3','q4','q5','q6','q7','q8','q9','p1','p2','p3','p4'].forEach(id=>donnees.append(id,document.getElementById(id).value.trim()));
+    fetch(URL_RESULTATS,{method:'POST',mode:'no-cors',body:donnees});
+  }
 </script>
 </body></html>
