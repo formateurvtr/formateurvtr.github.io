@@ -29,6 +29,14 @@
   <h1>Analyse d’une combustion Diesel</h1>
   <p class="subtitle">Activité d’ancrage — niveau BTS Maintenance des véhicules</p>
 
+  <form id="exercise">
+    <h2>Identification</h2>
+    <div class="question identity">
+      <label>Nom<input id="nom" name="nom" autocomplete="family-name" required></label>
+      <label>Prénom<input id="prenom" name="prenom" autocomplete="given-name" required></label>
+      <label>Groupe<input id="groupe" name="groupe" required></label>
+    </div>
+
   <section class="data">
     <h2>Données de fonctionnement</h2>
     <p>Un moteur Diesel fonctionne à <strong>1 200 tr/min</strong>.</p>
@@ -41,13 +49,6 @@
     <div class="measure"><span>Pression fin de compression : <strong>48 bar</strong></span><span>Température fin de compression : <strong>720 °C</strong></span><span>Pression maximale : <strong>185 bar</strong></span><span>Pression d’injection : <strong>2 200 bar</strong></span></div>
   </section>
 
-  <form id="exercise">
-    <h2>Identification</h2>
-    <div class="question identity">
-      <label>Nom<input id="nom" name="nom" autocomplete="family-name" required></label>
-      <label>Prénom<input id="prenom" name="prenom" autocomplete="given-name" required></label>
-      <label>Groupe<input id="groupe" name="groupe" required></label>
-    </div>
     <h2>Travail demandé</h2>
     <div class="question"><label for="q1">1. Calculez la durée d’un tour de vilebrequin.</label><div class="unit"><input id="q1" type="number" step="any" required><strong>ms</strong></div></div>
     <div class="question"><label for="q2">2. Calculez la durée d’un cycle complet à quatre temps.</label><div class="unit"><input id="q2" type="number" step="any" required><strong>ms</strong></div></div>
