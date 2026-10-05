@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ancrage - Fluides frigorigènes | BTS VTR</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#eef3f8;color:#16334e;font:17px/1.55 system-ui,Arial,sans-serif}main{max-width:950px;margin:auto;padding:22px}header{background:#153451;color:white;padding:24px;border-radius:14px}h1{font-size:29px;line-height:1.2;margin:0 0 12px}h2{font-size:24px}h3{font-size:19px}p{margin:10px 0}.box,.question{background:white;padding:22px;margin:18px 0;border:1px solid #c7d5e1;border-radius:12px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}label{display:block;font-weight:600;margin-bottom:8px}input,select,textarea{display:block;width:100%;font:inherit;padding:12px;border:1px solid #7a90a3;border-radius:7px;background:white;color:#16334e}textarea{min-height:95px}button{font:inherit;min-height:44px;padding:10px 18px;border:1px solid #153451;border-radius:8px;background:#153451;color:white;cursor:pointer}button:disabled{opacity:.45;cursor:default}.secondary{background:white;color:#153451}.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}nav{display:flex;gap:9px;flex-wrap:wrap;margin:20px 0}nav button[aria-current=step]{background:#176b9b}small,.subtle{font-size:14px}.feedback{padding:13px;margin:14px 0;border-radius:7px;background:#edf4fb}.good{background:#e3f5e9}.bad{background:#fff0df}.unit{max-width:300px}.question b{font-weight:700}summary{cursor:pointer;font-weight:600}details{margin-top:12px}.hidden,[hidden]{display:none!important}:focus-visible{outline:3px solid #c46e04;outline-offset:3px}#err{color:#a52518}progress{width:100%;height:18px;accent-color:#176b9b}footer{font-size:14px;padding:15px 0}#report{white-space:pre-line}.answer{margin:12px 0}@media(max-width:600px){main{padding:12px}.grid{grid-template-columns:1fr}h1{font-size:25px}.box,.question{padding:16px}nav button{flex:1 1 40%}}@media print{body{background:white;font-size:11pt}header{background:white;color:#16334e;border-bottom:2px solid #16334e}main{padding:0}#identity,nav,#work,.actions,footer,#progressbox,#sendbox{display:none!important}#bilan{display:block!important}.box{border:0;padding:0}h1{font-size:20pt}button{display:none}}
+</style>
+</head>
+<body><main>
+<header><p class="subtle">FORMATEUR VTR • BTS Maintenance des véhicules</p><h1>Choisir et manipuler un fluide frigorigène</h1><p>Activité d’ancrage • Chapitre 6</p></header>
+
+<section id="identity" class="box">
+<h2>Avant de commencer</h2>
+<p>Utilise ton cours. Pour chaque situation, choisis ou calcule une réponse, puis explique ton raisonnement avant de vérifier. Tu peux modifier ta réponse et recommencer.</p>
+<p><b>Durée conseillée : 20 à 30 minutes.</b></p>
+<form id="startform"><div class="grid">
+<div><label for="name">Nom</label><input id="name" required maxlength="60" autocomplete="family-name"></div>
+<div><label for="firstname">Prénom</label><input id="firstname" required maxlength="60" autocomplete="given-name"></div>
+<div><label for="group">Classe / groupe</label><input id="group" required maxlength="60"></div>
+</div><p id="err" role="alert"></p><div class="actions"><button type="submit">Commencer l’activité</button></div></form>
+<p class="subtle">À la fin, le bouton d’envoi transmet à l’enseignant ton identité, ton premier score, ton score final et le nombre de vérifications. Tes justifications restent dans le bilan imprimable.</p>
+</section>
+
+<div id="progressbox" hidden class="box"><p id="who"></p><label for="progress">Progression</label><progress id="progress" max="10" value="0"></progress><p id="count" aria-live="polite"></p></div>
+<nav id="nav" aria-label="Étapes de l’activité" hidden></nav>
+<section id="work" hidden aria-labelledby="stepTitle"></section>
+
+<section id="bilan" hidden class="box">
+<h2>Bilan de préparation</h2><div id="report"></div>
+<div class="box" id="sendbox"><h3>Transmettre mon bilan à l’enseignant</h3><p>Vérifie les dix réponses avant l’envoi. Le premier score et le score actuel sont des repères d’entraînement.</p>
+<form id="sendform" method="post" action="https://script.google.com/macros/s/AKfycbxtkjxERsQrcyxI23_BwhUFAh1JPhGLgOrO9UIwnvhSw3zL-fUEQi9WPG6i95E16q_g/exec" target="_blank" rel="noopener"><div id="payload"></div><button id="sendbutton" type="submit">Envoyer mon bilan à l’enseignant</button></form>
+<p id="sendstatus" role="status" aria-live="polite"></p><p class="subtle">L’envoi ouvre un nouvel onglet. Le message « OK » confirme la réception. Chaque envoi ajoute une ligne : ne renvoie pas le bilan si « OK » est affiché.</p><button id="retry-send" type="button" class="secondary" hidden>Réautoriser l’envoi si celui-ci a échoué</button></div>
+<h3>Pour réussir en intervention</h3><p>La bonne démarche consiste à identifier le fluide, consulter les données constructeur, choisir le matériel et l’huile compatibles, récupérer le fluide puis travailler en sécurité.</p>
+<div class="actions"><button id="print" type="button">Imprimer / enregistrer le bilan en PDF</button><button id="back" type="button" class="secondary">Revenir aux activités</button></div>
+</section>
+<footer>Activité formative • Les données du constructeur et les règles de l’atelier restent prioritaires pour toute intervention.</footer>
+</main>
+
+<script>
+'use strict';
+const steps=['Identifier','Impact environnemental','Intervenir','Sécurité'];
+const questions=[
+{id:'recent',s:0,title:'1 • Identifier le fluide d’un véhicule récent',text:'L’étiquette d’un véhicule récent indique « R1234yf — 650 g ». Quelle conclusion est correcte ?',opts:['Le circuit doit être rempli avec 650 g de R1234yf et avec le matériel prévu pour ce fluide.','Le R134a peut être utilisé si la même masse est injectée.','Le raccord de service suffit pour choisir librement le fluide.'],key:0,explain:'L’étiquette et la documentation constructeur identifient le fluide et la charge. Le R1234yf ne doit pas être remplacé directement par du R134a.',hint:'Le fluide, la masse, l’huile et le matériel forment un ensemble défini par le constructeur.',course:'Identification et données constructeur'},
+{id:'unknown',s:0,title:'2 • Réagir devant un circuit douteux',text:'L’étiquette est illisible et le véhicule a déjà été réparé. Que faut-il faire avant de raccorder la station de récupération ?',opts:['Se fier uniquement à la forme des raccords.','Analyser le fluide et, s’il est contaminé, le récupérer dans une bouteille dédiée.','Ajouter une petite quantité de R134a pour observer les pressions.'],key:1,explain:'Un raccord ne garantit pas le contenu réel du circuit. L’analyse évite de contaminer la station et sa bouteille de récupération.',hint:'Une erreur peut contaminer tout le matériel de l’atelier.',course:'Identification et contamination'},
+{id:'transport',s:0,title:'3 • Situer les domaines d’emploi',text:'Sur quel équipement rencontre-t-on principalement le R452A ?',opts:['Un groupe frigorifique de transport de marchandises.','Le circuit de refroidissement moteur.','Une ancienne climatisation de cabine conçue pour le R134a.'],key:0,explain:'Le R452A est utilisé dans le froid de transport. Il ne constitue pas un substitut librement interchangeable avec les fluides de climatisation de cabine.',hint:'Distingue la climatisation des occupants et la conservation des marchandises.',course:'Fluides rencontrés en VTR'},
+{id:'co2eq',s:1,title:'4 • Calculer l’impact d’une perte',text:'Un circuit au R134a perd 40 g de fluide. Son PRG est de 1 430. Quelle masse de CO₂ équivalent cette perte représente-t-elle, en kilogrammes ?',num:57.2,unit:'Kilogrammes de CO₂ équivalent',explain:'40 g = 0,040 kg. L’équivalent CO₂ vaut 0,040 × 1 430 = 57,2 kg de CO₂ équivalent.',hint:'Convertis d’abord les grammes en kilogrammes, puis multiplie par le PRG.',course:'PRG et équivalent CO₂'},
+{id:'loss',s:1,title:'5 • Interpréter la valeur de 40 g/an',text:'Comment interpréter correctement la valeur de 40 g/an parfois citée pour un circuit à un évaporateur ?',opts:['C’est une quantité à rajouter automatiquement chaque année.','C’est une limite d’homologation issue de la climatisation mobile, pas une fuite à considérer systématiquement comme normale.','En dessous de cette valeur, toute recherche de fuite est interdite.'],key:1,explain:'Cette valeur ne justifie ni une recharge automatique ni l’absence de diagnostic. Une perte rapide ou des appoints répétés imposent une recherche de fuite.',hint:'Distingue une limite réglementaire d’homologation d’une consigne d’entretien.',course:'Fuites et impact environnemental'},
+{id:'direct',s:1,title:'6 • Distinguer les émissions',text:'Laquelle de ces situations correspond à une émission indirecte liée à la climatisation ?',opts:['Le rejet du fluide lors de l’ouverture du circuit.','Une fuite au niveau d’un flexible.','L’énergie consommée pour entraîner ou alimenter le compresseur.'],key:2,explain:'Les fuites de fluide sont des émissions directes. L’énergie nécessaire au fonctionnement du système produit un impact indirect.',hint:'Le fluide n’est pas le seul responsable de l’impact climatique du système.',course:'Émissions directes et indirectes'},
+{id:'oil',s:2,title:'7 • Choisir l’huile frigorifique',text:'Un compresseur électrique haute tension doit être remplacé. Quelle règle faut-il appliquer pour l’huile ?',opts:['Employer n’importe quelle huile PAG disponible dans l’atelier.','Utiliser exclusivement la référence et la quantité prescrites par le constructeur.','Ajouter davantage d’huile pour améliorer l’isolation électrique.'],key:1,explain:'Une huile inadaptée ou contaminée peut dégrader la lubrification et l’isolation électrique. La référence, la viscosité et la quantité prescrites doivent être respectées.',hint:'Sur un compresseur électrique, l’huile participe aussi à la sécurité électrique.',course:'Huiles et compresseurs électriques'},
+{id:'open',s:2,title:'8 • Ouvrir le circuit correctement',text:'Quelle séquence est correcte avant de déposer une canalisation frigorifique ?',opts:['Desserrer lentement le raccord pour laisser sortir le fluide, puis récupérer le reste.','Récupérer le fluide avec la station adaptée, contrôler l’absence de pression, puis ouvrir et obturer les conduites.','Mettre le circuit sous pression d’air comprimé, puis ouvrir le raccord.'],key:1,explain:'Le fluide doit être récupéré avant l’ouverture. Le contrôle de la pression résiduelle et l’obturation des conduites limitent les risques et l’entrée d’humidité.',hint:'Il ne faut ni rejeter le fluide ni laisser le circuit ouvert à l’air.',course:'Méthode d’intervention'},
+{id:'yf',s:3,title:'9 • Travailler avec le R1234yf',text:'Le R1234yf est classé A2L. Quelle précaution est cohérente ?',opts:['Supprimer les sources d’inflammation et ventiler la zone de travail.','Effectuer une recherche de fuite avec une flamme.','Travailler dans une fosse fermée pour retenir le fluide.'],key:0,explain:'Le R1234yf présente une inflammabilité limitée. Il faut supprimer les sources d’inflammation, utiliser du matériel compatible et assurer la ventilation.',hint:'A2L signifie faible toxicité et inflammabilité limitée.',course:'Sécurité du R1234yf'},
+{id:'r744',s:3,title:'10 • Reconnaître la contrainte du R744',text:'Quelle contrainte distingue principalement un circuit au R744 — CO₂ ?',opts:['Il fonctionne à des pressions beaucoup plus élevées et exige un matériel spécifique.','Il doit obligatoirement être mélangé au R134a.','Il ne peut pas absorber de chaleur dans un évaporateur.'],key:0,explain:'Les circuits au R744 travaillent sous des pressions très supérieures à celles des systèmes au R134a ou au R1234yf. Les composants, les outils et les procédures doivent être adaptés.',hint:'Observe la particularité signalée sur l’illustration récapitulative du chapitre.',course:'R744 et haute pression'}
+];
+
+const state={name:'',nom:'',prenom:'',group:'',submitted:false,step:0,answers:{},reason:{},attempts:{},first:{},ok:{}};
+const $=id=>document.getElementById(id);
+function escapeHTML(x){return String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function numeric(x){const s=String(x).trim().replace(/[\s\u00a0\u202f]/g,'').replace(',','.');return /^[-+]?(?:\d+(?:\.\d*)?|\.\d+)$/.test(s)?Number(s):NaN;}
+function correct(q,value){return q.num!==undefined?Number.isFinite(numeric(value))&&Math.abs(numeric(value)-q.num)<Math.max(0.005,Math.abs(q.num)*0.001):String(value)===String(q.key);}
+
+function render(){
+  $('bilan').hidden=true;$('work').hidden=false;
+  $('nav').innerHTML=steps.map((s,i)=>`<button type="button" data-step="${i}" ${i===state.step?'aria-current="step"':''}>${i+1}. ${s}</button>`).join('');
+  $('nav').querySelectorAll('button').forEach(b=>b.onclick=()=>{state.step=Number(b.dataset.step);render();$('stepTitle').focus();});
+  const qs=questions.filter(q=>q.s===state.step);
+  $('work').innerHTML=`<h2 id="stepTitle" tabindex="-1">${state.step+1} • ${steps[state.step]}</h2><p>Avant de vérifier, explique en une phrase pourquoi ta réponse convient.</p>`+qs.map(q=>`<article class="question"><h3>${q.title}</h3><p>${q.text}</p><label for="a-${q.id}">${q.num!==undefined?q.unit:'Ta réponse'}</label>${q.num!==undefined?`<input class="unit" id="a-${q.id}" inputmode="decimal" type="text" value="${escapeHTML(state.answers[q.id]??'')}" placeholder="Valeur numérique">`:`<select id="a-${q.id}"><option value="">Choisir une réponse</option>${q.opts.map((o,i)=>`<option value="${i}" ${String(state.answers[q.id])===String(i)?'selected':''}>${o}</option>`).join('')}</select>`}<div class="answer"><label for="r-${q.id}">Mon raisonnement / mon calcul</label><textarea id="r-${q.id}" maxlength="1500" placeholder="Relie ta réponse à la situation. Pour un calcul, indique les opérations et les unités.">${escapeHTML(state.reason[q.id]??'')}</textarea></div><details><summary>Un indice</summary><p>${q.hint}</p></details><div class="actions"><button type="button" data-check="${q.id}">Vérifier ma réponse</button></div><div id="f-${q.id}" aria-live="polite">${state.ok[q.id]?`<div class="feedback good"><b>Réponse validée.</b> ${q.explain}<br><small>Ta justification reste à comparer à cette explication : elle n’est pas corrigée automatiquement.</small></div>`:''}</div></article>`).join('')+`<div class="actions">${state.step<3?'<button id="next" type="button">Étape suivante</button>':''}<button id="finish" class="secondary" type="button">Voir mon bilan</button></div>`;
+  qs.forEach(q=>{
+    $('a-'+q.id).oninput=e=>{state.answers[q.id]=e.target.value;if(state.ok[q.id]){state.ok[q.id]=false;$('f-'+q.id).innerHTML='';updateProgress();}};
+    $('r-'+q.id).oninput=e=>{state.reason[q.id]=e.target.value;};
+  });
+  $('work').querySelectorAll('[data-check]').forEach(b=>b.onclick=()=>check(questions.find(q=>q.id===b.dataset.check)));
+  if($('next'))$('next').onclick=()=>{state.step++;render();$('stepTitle').focus();};
+  $('finish').onclick=report;updateProgress();
+}
+
+function check(q){
+  const v=$('a-'+q.id).value,reason=$('r-'+q.id).value.trim();state.answers[q.id]=v;state.reason[q.id]=reason;
+  if(!v.trim()||!reason){$('f-'+q.id).innerHTML='<p class="feedback bad">Choisis ou saisis une réponse et ajoute ton raisonnement avant de vérifier.</p>';return;}
+  const ok=correct(q,v);state.attempts[q.id]=(state.attempts[q.id]??0)+1;if(!(q.id in state.first))state.first[q.id]=ok;state.ok[q.id]=ok;
+  $('f-'+q.id).innerHTML=`<div class="feedback ${ok?'good':'bad'}"><b>${ok?'Réponse validée.':'Réponse à reprendre.'}</b> ${q.explain}<p class="subtle">Compare ton raisonnement à l’explication.${ok?'':' Modifie ta réponse, puis vérifie à nouveau.'}</p></div>`;updateProgress();
+}
+
+function updateProgress(){const n=Object.values(state.ok).filter(Boolean).length;$('progress').value=n;$('count').textContent=`${n} / 10 réponses validées. L’objectif est de comprendre la démarche, pas seulement de choisir la bonne réponse.`;}
+
+function report(){
+  $('work').hidden=true;$('bilan').hidden=false;
+  const valid=questions.filter(q=>state.ok[q.id]).length,first=questions.filter(q=>state.first[q.id]===true).length;
+  const rows=questions.map(q=>`${q.title}\n${state.ok[q.id]?'Validée':state.attempts[q.id]?'À reprendre':'Non vérifiée'} • ${state.attempts[q.id]??0} vérification(s)\nRéponse : ${q.opts&&state.answers[q.id]!==undefined?q.opts[Number(state.answers[q.id])]??'Non renseignée':state.answers[q.id]||'Non renseignée'}\nRaisonnement : ${state.reason[q.id]||'Non renseigné'}\n`).join('\n');
+  const review=[...new Set(questions.filter(q=>!state.first[q.id]||!state.ok[q.id]).map(q=>q.course))];
+  $('report').textContent=`${state.name} • ${state.group}\n${new Date().toLocaleDateString('fr-FR')}\n\n${valid} / 10 réponses actuellement validées.\n${first} / 10 réussies à la première vérification. Il s’agit d’un repère d’entraînement, pas d’une note.\n\nÀ revoir : ${review.length?review.join(' ; '):'Relire tes justifications et vérifier que tu peux expliquer chaque réponse sans la correction.'}\n\n${rows}`;
+  refreshSend();$('bilan').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+$('startform').onsubmit=e=>{e.preventDefault();state.nom=$('name').value.trim();state.prenom=$('firstname').value.trim();state.name=state.nom+' '+state.prenom;state.group=$('group').value.trim();if(!state.nom||!state.prenom||!state.group){$('err').textContent='Indique ton nom, ton prénom et ton groupe.';return;}$('identity').hidden=true;$('progressbox').hidden=false;$('nav').hidden=false;$('who').textContent=state.name+' • '+state.group;render();};
+
+function summaryPayload(){return {type:'fluides_frigorigenes_final',nom:state.nom,prenom:state.prenom,groupe:state.group,ancrage:'Fluides frigorigènes - ancrage final',premierScore:questions.filter(q=>state.first[q.id]===true).length+'/10',scoreFinal:questions.filter(q=>state.ok[q.id]).length+'/10',tentatives:String(questions.reduce((sum,q)=>sum+(state.attempts[q.id]||0),0))};}
+
+function refreshSend(){
+  const checked=questions.filter(q=>state.attempts[q.id]).length;
+  $('sendbutton').disabled=checked<10||state.submitted;
+  if(!state.submitted)$('sendstatus').textContent=checked<10?'Il reste '+(10-checked)+' réponse(s) à vérifier avant l’envoi.':'Le bilan est prêt à être transmis.';
+  $('payload').innerHTML='';
+  Object.entries(summaryPayload()).forEach(([name,value])=>{const input=document.createElement('input');input.type='hidden';input.name=name;input.value=value;$('payload').appendChild(input);});
+}
+
+$('sendform').onsubmit=e=>{
+  if(questions.some(q=>!state.attempts[q.id])||state.submitted){e.preventDefault();return;}
+  refreshSend();state.submitted=true;$('sendstatus').textContent='Envoi demandé. Dans le nouvel onglet, vérifie que le message « OK » apparaît.';$('retry-send').hidden=false;setTimeout(()=>{$('sendbutton').disabled=true;},0);
+};
+$('retry-send').onclick=()=>{if(!window.confirm('Réessaie uniquement si le premier envoi a échoué. Un second envoi peut créer une deuxième ligne. Continuer ?'))return;state.submitted=false;$('retry-send').hidden=true;refreshSend();};
+$('print').onclick=()=>window.print();$('back').onclick=render;
+</script>
+</body>
+</html>
