@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ancrage - Gestion thermique Euro 6 | BTS VTR</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#eef3f8;color:#16334e;font:17px/1.55 system-ui,Arial,sans-serif}main{max-width:950px;margin:auto;padding:22px}header{background:#153451;color:white;padding:24px;border-radius:14px}h1{font-size:29px;line-height:1.2;margin:0 0 12px}h2{font-size:24px}h3{font-size:19px}p{margin:10px 0}.box,.question{background:white;padding:22px;margin:18px 0;border:1px solid #c7d5e1;border-radius:12px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}label{display:block;font-weight:600;margin-bottom:8px}input,select,textarea{display:block;width:100%;font:inherit;padding:12px;border:1px solid #7a90a3;border-radius:7px;background:white;color:#16334e}textarea{min-height:95px}button{font:inherit;min-height:44px;padding:10px 18px;border:1px solid #153451;border-radius:8px;background:#153451;color:white;cursor:pointer}button:disabled{opacity:.45;cursor:default}.secondary{background:white;color:#153451}.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}nav{display:flex;gap:9px;flex-wrap:wrap;margin:20px 0}nav button[aria-current=step]{background:#176b9b}small,.subtle{font-size:14px}.feedback{padding:13px;margin:14px 0;border-radius:7px;background:#edf4fb}.good{background:#e3f5e9}.bad{background:#fff0df}.question b{font-weight:700}summary{cursor:pointer;font-weight:600}details{margin-top:12px}.hidden,[hidden]{display:none!important}:focus-visible{outline:3px solid #c46e04;outline-offset:3px}#err{color:#a52518}progress{width:100%;height:18px;accent-color:#176b9b}footer{font-size:14px;padding:15px 0}#report{white-space:pre-line}.answer{margin:12px 0}@media(max-width:600px){main{padding:12px}.grid{grid-template-columns:1fr}h1{font-size:25px}.box,.question{padding:16px}nav button{flex:1 1 40%}}@media print{body{background:white;font-size:11pt}header{background:white;color:#16334e;border-bottom:2px solid #16334e}main{padding:0}#identity,nav,#work,.actions,footer,#progressbox,#sendbox{display:none!important}#bilan{display:block!important}.box{border:0;padding:0}h1{font-size:20pt}button{display:none}}
+</style>
+</head>
+<body><main>
+<header><p class="subtle">FORMATEUR VTR • BTS Maintenance des véhicules</p><h1>Diagnostiquer une interdiction de climatisation</h1><p>Activité d’ancrage • Gestion thermique Euro 6</p></header>
+
+<section id="identity" class="box">
+<h2>Situation professionnelle</h2>
+<p>Un véhicule Euro 6 arrive à l’atelier : le conducteur demande du froid, mais le compresseur ne fonctionne pas. Tu dois déterminer si la panne provient du circuit frigorifique, de sa commande ou d’une stratégie de protection.</p>
+<p><b>Durée conseillée : 25 à 30 minutes.</b></p>
+<form id="startform"><div class="grid">
+<div><label for="name">Nom</label><input id="name" required maxlength="60" autocomplete="family-name"></div>
+<div><label for="firstname">Prénom</label><input id="firstname" required maxlength="60" autocomplete="given-name"></div>
+<div><label for="group">Classe / groupe</label><input id="group" required maxlength="60"></div>
+</div><p id="err" role="alert"></p><div class="actions"><button type="submit">Commencer le diagnostic</button></div></form>
+<p class="subtle">À la fin, le bouton d’envoi transmet à l’enseignant ton identité, ton premier score, ton score final et le nombre de vérifications. Tes justifications restent dans le bilan imprimable.</p>
+</section>
+
+<div id="progressbox" hidden class="box"><p id="who"></p><label for="progress">Progression</label><progress id="progress" max="10" value="0"></progress><p id="count" aria-live="polite"></p></div>
+<nav id="nav" aria-label="Étapes du diagnostic" hidden></nav>
+<section id="work" hidden aria-labelledby="stepTitle"></section>
+
+<section id="bilan" hidden class="box">
+<h2>Bilan du diagnostic</h2><div id="report"></div>
+<div class="box" id="sendbox"><h3>Transmettre mon bilan à l’enseignant</h3><p>Vérifie les dix réponses avant l’envoi. Le premier score et le score actuel sont des repères d’entraînement.</p>
+<form id="sendform" method="post" action="https://script.google.com/macros/s/AKfycbxtkjxERsQrcyxI23_BwhUFAh1JPhGLgOrO9UIwnvhSw3zL-fUEQi9WPG6i95E16q_g/exec" target="_blank" rel="noopener"><div id="payload"></div><button id="sendbutton" type="submit">Envoyer mon bilan à l’enseignant</button></form>
+<p id="sendstatus" role="status" aria-live="polite"></p><p class="subtle">L’envoi ouvre un nouvel onglet. Le message « OK » confirme la réception. Chaque envoi ajoute une ligne : ne renvoie pas le bilan si « OK » est affiché.</p><button id="retry-send" type="button" class="secondary" hidden>Réautoriser l’envoi si celui-ci a échoué</button></div>
+<h3>La logique à retenir</h3><p>Demande du conducteur → mesures → autorisation → consigne → actionneurs → résultat → nouvelle correction. Une absence de commande peut être une protection normale et non une panne du compresseur.</p>
+<div class="actions"><button id="print" type="button">Imprimer / enregistrer le bilan en PDF</button><button id="back" type="button" class="secondary">Revenir aux activités</button></div>
+</section>
+<footer>Activité formative • Les valeurs et procédures du constructeur restent prioritaires pour toute intervention.</footer>
+</main>
+
+<script>
+'use strict';
+const steps=['Demande','Mesures','Autorisation','Commande','Diagnostic'];
+const questions=[
+{id:'request',s:0,title:'1 • Interpréter la demande du conducteur',text:'La consigne est réglée à 18 °C, l’habitacle est à 29 °C et le témoin A/C est allumé. Quelle conclusion est correcte ?',opts:['Une demande de refroidissement est bien présente.','Le compresseur fonctionne obligatoirement.','Le circuit contient forcément la masse correcte de fluide.'],key:0,explain:'La différence entre la consigne et la température habitacle crée une demande importante. Elle ne prouve ni l’autorisation ni le fonctionnement réel du compresseur.',hint:'Distingue la demande du conducteur de la réponse du système.',course:'Demande, autorisation et fonctionnement réel'},
+{id:'loop',s:0,title:'2 • Reconnaître la boucle de régulation',text:'Que fait le calculateur après avoir reçu la consigne de température ?',opts:['Il commande toujours le compresseur à sa puissance maximale.','Il compare la consigne aux mesures, vérifie les sécurités puis adapte les actionneurs.','Il attend uniquement que le conducteur modifie le réglage.'],key:1,explain:'La régulation est une boucle : mesure, comparaison, correction, contrôle du résultat et nouvelle correction.',hint:'La commande évolue en permanence avec les mesures.',course:'Boucle de rétroaction thermique'},
+{id:'pressure',s:1,title:'3 • Exploiter la pression frigorifique',text:'Le diagnostic indique une pression statique extrêmement faible. Quelle décision est la plus cohérente ?',opts:['Remplacer immédiatement le calculateur de climatisation.','Suspecter une charge insuffisante, rechercher une fuite et appliquer la procédure de récupération et de contrôle.','Forcer électriquement le compresseur pour confirmer la panne.'],key:1,explain:'Une pression trop faible peut provoquer une interdiction du compresseur afin de le protéger. La cause de la perte doit être recherchée.',hint:'Le calculateur peut couper le compresseur pour éviter son fonctionnement sans fluide ni lubrification correcte.',course:'Pression frigorifique et protection du compresseur'},
+{id:'evap',s:1,title:'4 • Interpréter une température incohérente',text:'Moteur froid, la sonde d’évaporateur indique −35 °C. Quelle conséquence est probable ?',opts:['Le calculateur peut interdire le compresseur en croyant l’évaporateur givré.','Le calculateur augmente automatiquement la vitesse du compresseur.','Cette valeur n’a aucune influence sur la climatisation.'],key:0,explain:'Une valeur très basse et incohérente peut être interprétée comme un risque de givrage. Il faut contrôler la sonde, son faisceau et la valeur de remplacement.',hint:'Un capteur défectueux peut provoquer une commande de sécurité cohérente avec la mauvaise information reçue.',course:'Capteurs et valeurs incohérentes'},
+{id:'engine',s:2,title:'5 • Comprendre l’interdiction moteur',text:'La demande A/C est présente, mais le paramètre « autorisation compresseur » indique NON et la température moteur est excessive. Quelle conclusion est correcte ?',opts:['Le compresseur est nécessairement hors service.','Le calculateur protège le moteur en donnant la priorité au refroidissement.','La sonde de température habitacle est forcément défectueuse.'],key:1,explain:'La protection thermique du moteur est prioritaire sur le confort. Le compresseur peut être limité ou coupé jusqu’au retour à une température acceptable.',hint:'Relis l’ordre des priorités de la gestion thermique.',course:'Priorités et protection thermique du moteur'},
+{id:'fan',s:2,title:'6 • Relier ventilateur et climatisation',text:'Le ventilateur du condenseur ne fonctionne pas et la pression haute augmente rapidement. Quelle réaction du système est attendue ?',opts:['Maintenir le compresseur en marche sans limite.','Réduire ou couper le compresseur afin d’éviter une surpression.','Ouvrir le circuit frigorifique pour faire baisser la pression.'],key:1,explain:'Sans débit d’air suffisant au condenseur, la haute pression augmente. Le calculateur limite ou interdit le compresseur pour protéger le circuit.',hint:'Le condenseur doit évacuer la chaleur vers l’air extérieur.',course:'Ventilation du condenseur et haute pression'},
+{id:'actual',s:3,title:'7 • Comparer consigne et fonctionnement réel',text:'L’autorisation est OUI et la consigne du compresseur est élevée, mais les pressions BP et HP restent presque identiques. Que faut-il rechercher ?',opts:['Un défaut d’actionnement ou de compression avant de condamner le calculateur.','Une panne du capteur d’ensoleillement uniquement.','Une température extérieure trop basse, quelle que soit sa valeur réelle.'],key:0,explain:'La commande est présente mais l’effet attendu n’apparaît pas. Il faut contrôler l’actionnement du compresseur, sa régulation, son alimentation et sa capacité à comprimer.',hint:'Ici, le problème se situe après la décision du calculateur.',course:'Consigne et résultat réel du compresseur'},
+{id:'regen',s:3,title:'8 • Prendre en compte une régénération du FAP',text:'Pendant une régénération, la température du groupe motopropulseur augmente. Quelle affirmation est correcte ?',opts:['La climatisation est toujours coupée pendant toute régénération.','La commande de climatisation peut être adaptée selon la température et la stratégie constructeur.','La dépollution ne communique jamais avec la gestion thermique.'],key:1,explain:'La régénération augmente la charge thermique. La climatisation peut être maintenue, réduite ou coupée selon les conditions et la stratégie du véhicule.',hint:'Évite les règles absolues : les calculateurs arbitrent en fonction des mesures.',course:'Interaction entre climatisation et dépollution'},
+{id:'electric',s:4,title:'9 • Diagnostiquer un compresseur haute tension',text:'Sur un véhicule électrique, une demande est présente mais un défaut d’isolement est enregistré. Quelle priorité s’impose ?',opts:['Forcer le compresseur pour vérifier s’il produit du froid.','Appliquer la procédure de sécurité haute tension et rechercher la cause du défaut avant toute commande.','Ajouter une huile frigorifique quelconque.'],key:1,explain:'La sécurité électrique est prioritaire. La consignation et la procédure constructeur doivent être appliquées avant le contrôle du compresseur haute tension.',hint:'La récupération du fluide ne supprime pas le risque électrique.',course:'Sécurité des systèmes haute tension'},
+{id:'method',s:4,title:'10 • Choisir la bonne conclusion de diagnostic',text:'Quelle méthode évite le remplacement injustifié d’un compresseur ?',opts:['Vérifier successivement la demande, les mesures, l’autorisation, la consigne et le résultat obtenu.','Remplacer le compresseur dès que l’air soufflé n’est plus froid.','Effacer les défauts puis rendre le véhicule sans contrôle.'],key:0,explain:'Le diagnostic doit suivre toute la chaîne de décision. Il permet de distinguer une interdiction normale, un défaut de commande et une défaillance réelle du composant.',hint:'Suis la boucle complète représentée dans l’illustration du chapitre.',course:'Démarche complète de diagnostic'}
+];
+
+const state={name:'',nom:'',prenom:'',group:'',submitted:false,step:0,answers:{},reason:{},attempts:{},first:{},ok:{}};
+const $=id=>document.getElementById(id);
+function escapeHTML(x){return String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function correct(q,value){return String(value)===String(q.key);}
+
+function render(){
+  $('bilan').hidden=true;$('work').hidden=false;
+  $('nav').innerHTML=steps.map((s,i)=>`<button type="button" data-step="${i}" ${i===state.step?'aria-current="step"':''}>${i+1}. ${s}</button>`).join('');
+  $('nav').querySelectorAll('button').forEach(b=>b.onclick=()=>{state.step=Number(b.dataset.step);render();$('stepTitle').focus();});
+  const qs=questions.filter(q=>q.s===state.step);
+  $('work').innerHTML=`<h2 id="stepTitle" tabindex="-1">${state.step+1} • ${steps[state.step]}</h2><p>Avant de vérifier, explique en une phrase pourquoi ta réponse convient.</p>`+qs.map(q=>`<article class="question"><h3>${q.title}</h3><p>${q.text}</p><label for="a-${q.id}">Ta réponse</label><select id="a-${q.id}"><option value="">Choisir une réponse</option>${q.opts.map((o,i)=>`<option value="${i}" ${String(state.answers[q.id])===String(i)?'selected':''}>${o}</option>`).join('')}</select><div class="answer"><label for="r-${q.id}">Mon raisonnement</label><textarea id="r-${q.id}" maxlength="1500" placeholder="Relie ta décision aux mesures, à la commande et aux priorités du système.">${escapeHTML(state.reason[q.id]??'')}</textarea></div><details><summary>Un indice</summary><p>${q.hint}</p></details><div class="actions"><button type="button" data-check="${q.id}">Vérifier ma réponse</button></div><div id="f-${q.id}" aria-live="polite">${state.ok[q.id]?`<div class="feedback good"><b>Réponse validée.</b> ${q.explain}<br><small>Ta justification reste à comparer à cette explication : elle n’est pas corrigée automatiquement.</small></div>`:''}</div></article>`).join('')+`<div class="actions">${state.step<4?'<button id="next" type="button">Étape suivante</button>':''}<button id="finish" class="secondary" type="button">Voir mon bilan</button></div>`;
+  qs.forEach(q=>{
+    $('a-'+q.id).oninput=e=>{state.answers[q.id]=e.target.value;if(state.ok[q.id]){state.ok[q.id]=false;$('f-'+q.id).innerHTML='';updateProgress();}};
+    $('r-'+q.id).oninput=e=>{state.reason[q.id]=e.target.value;};
+  });
+  $('work').querySelectorAll('[data-check]').forEach(b=>b.onclick=()=>check(questions.find(q=>q.id===b.dataset.check)));
+  if($('next'))$('next').onclick=()=>{state.step++;render();$('stepTitle').focus();};
+  $('finish').onclick=report;updateProgress();
+}
+
+function check(q){
+  const v=$('a-'+q.id).value,reason=$('r-'+q.id).value.trim();state.answers[q.id]=v;state.reason[q.id]=reason;
+  if(!v.trim()||!reason){$('f-'+q.id).innerHTML='<p class="feedback bad">Choisis une réponse et ajoute ton raisonnement avant de vérifier.</p>';return;}
+  const ok=correct(q,v);state.attempts[q.id]=(state.attempts[q.id]??0)+1;if(!(q.id in state.first))state.first[q.id]=ok;state.ok[q.id]=ok;
+  $('f-'+q.id).innerHTML=`<div class="feedback ${ok?'good':'bad'}"><b>${ok?'Réponse validée.':'Réponse à reprendre.'}</b> ${q.explain}<p class="subtle">Compare ton raisonnement à l’explication.${ok?'':' Modifie ta réponse, puis vérifie à nouveau.'}</p></div>`;updateProgress();
+}
+
+function updateProgress(){const n=Object.values(state.ok).filter(Boolean).length;$('progress').value=n;$('count').textContent=`${n} / 10 réponses validées. L’objectif est de comprendre la chaîne de décision complète.`;}
+
+function report(){
+  $('work').hidden=true;$('bilan').hidden=false;
+  const valid=questions.filter(q=>state.ok[q.id]).length,first=questions.filter(q=>state.first[q.id]===true).length;
+  const rows=questions.map(q=>`${q.title}\n${state.ok[q.id]?'Validée':state.attempts[q.id]?'À reprendre':'Non vérifiée'} • ${state.attempts[q.id]??0} vérification(s)\nRéponse : ${q.opts&&state.answers[q.id]!==undefined?q.opts[Number(state.answers[q.id])]??'Non renseignée':'Non renseignée'}\nRaisonnement : ${state.reason[q.id]||'Non renseigné'}\n`).join('\n');
+  const review=[...new Set(questions.filter(q=>!state.first[q.id]||!state.ok[q.id]).map(q=>q.course))];
+  $('report').textContent=`${state.name} • ${state.group}\n${new Date().toLocaleDateString('fr-FR')}\n\n${valid} / 10 réponses actuellement validées.\n${first} / 10 réussies à la première vérification. Il s’agit d’un repère d’entraînement, pas d’une note.\n\nÀ revoir : ${review.length?review.join(' ; '):'Relire tes justifications et vérifier que tu peux expliquer toute la chaîne de décision.'}\n\n${rows}`;
+  refreshSend();$('bilan').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+$('startform').onsubmit=e=>{e.preventDefault();state.nom=$('name').value.trim();state.prenom=$('firstname').value.trim();state.name=state.nom+' '+state.prenom;state.group=$('group').value.trim();if(!state.nom||!state.prenom||!state.group){$('err').textContent='Indique ton nom, ton prénom et ton groupe.';return;}$('identity').hidden=true;$('progressbox').hidden=false;$('nav').hidden=false;$('who').textContent=state.name+' • '+state.group;render();};
+
+function summaryPayload(){return {type:'gestion_thermique_euro6_final',nom:state.nom,prenom:state.prenom,groupe:state.group,ancrage:'Gestion thermique Euro 6 - ancrage final',premierScore:questions.filter(q=>state.first[q.id]===true).length+'/10',scoreFinal:questions.filter(q=>state.ok[q.id]).length+'/10',tentatives:String(questions.reduce((sum,q)=>sum+(state.attempts[q.id]||0),0))};}
+
+function refreshSend(){
+  const checked=questions.filter(q=>state.attempts[q.id]).length;
+  $('sendbutton').disabled=checked<10||state.submitted;
+  if(!state.submitted)$('sendstatus').textContent=checked<10?'Il reste '+(10-checked)+' réponse(s) à vérifier avant l’envoi.':'Le bilan est prêt à être transmis.';
+  $('payload').innerHTML='';
+  Object.entries(summaryPayload()).forEach(([name,value])=>{const input=document.createElement('input');input.type='hidden';input.name=name;input.value=value;$('payload').appendChild(input);});
+}
+
+$('sendform').onsubmit=e=>{
+  if(questions.some(q=>!state.attempts[q.id])||state.submitted){e.preventDefault();return;}
+  refreshSend();state.submitted=true;$('sendstatus').textContent='Envoi demandé. Dans le nouvel onglet, vérifie que le message « OK » apparaît.';$('retry-send').hidden=false;setTimeout(()=>{$('sendbutton').disabled=true;},0);
+};
+$('retry-send').onclick=()=>{if(!window.confirm('Réessaie uniquement si le premier envoi a échoué. Un second envoi peut créer une deuxième ligne. Continuer ?'))return;state.submitted=false;$('retry-send').hidden=true;refreshSend();};
+$('print').onclick=()=>window.print();$('back').onclick=render;
+</script>
+</body>
+</html>
