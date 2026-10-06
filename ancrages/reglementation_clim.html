@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ancrage - Réglementation et sécurité | BTS VTR</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#eef3f8;color:#16334e;font:17px/1.55 system-ui,Arial,sans-serif}main{max-width:950px;margin:auto;padding:22px}header{background:#153451;color:white;padding:24px;border-radius:14px}h1{font-size:29px;line-height:1.2;margin:0 0 12px}h2{font-size:24px}h3{font-size:19px}p{margin:10px 0}.box,.question{background:white;padding:22px;margin:18px 0;border:1px solid #c7d5e1;border-radius:12px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}label{display:block;font-weight:600;margin-bottom:8px}input,select,textarea{display:block;width:100%;font:inherit;padding:12px;border:1px solid #7a90a3;border-radius:7px;background:white;color:#16334e}textarea{min-height:95px}button{font:inherit;min-height:44px;padding:10px 18px;border:1px solid #153451;border-radius:8px;background:#153451;color:white;cursor:pointer}button:disabled{opacity:.45;cursor:default}.secondary{background:white;color:#153451}.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}nav{display:flex;gap:9px;flex-wrap:wrap;margin:20px 0}nav button[aria-current=step]{background:#176b9b}small,.subtle{font-size:14px}.feedback{padding:13px;margin:14px 0;border-radius:7px;background:#edf4fb}.good{background:#e3f5e9}.bad{background:#fff0df}.question b{font-weight:700}summary{cursor:pointer;font-weight:600}details{margin-top:12px}.hidden,[hidden]{display:none!important}:focus-visible{outline:3px solid #c46e04;outline-offset:3px}#err{color:#a52518}progress{width:100%;height:18px;accent-color:#176b9b}footer{font-size:14px;padding:15px 0}#report{white-space:pre-line}.answer{margin:12px 0}@media(max-width:600px){main{padding:12px}.grid{grid-template-columns:1fr}h1{font-size:25px}.box,.question{padding:16px}nav button{flex:1 1 40%}}@media print{body{background:white;font-size:11pt}header{background:white;color:#16334e;border-bottom:2px solid #16334e}main{padding:0}#identity,nav,#work,.actions,footer,#progressbox,#sendbox{display:none!important}#bilan{display:block!important}.box{border:0;padding:0}h1{font-size:20pt}button{display:none}}
+</style>
+</head>
+<body><main>
+<header><p class="subtle">FORMATEUR VTR • BTS Maintenance des véhicules</p><h1>Mission climatisation : intervenir en sécurité et respecter la réglementation</h1><p>Activité d’ancrage • Chapitre 7</p></header>
+
+<section id="identity" class="box">
+<h2>Avant de commencer</h2>
+<p>Tu prends en charge un véhicule dont la climatisation ne produit plus suffisamment de froid. À chaque étape, choisis la conduite professionnelle adaptée puis justifie ta décision avant de vérifier.</p>
+<p><b>Durée conseillée : 25 à 30 minutes.</b></p>
+<form id="startform"><div class="grid">
+<div><label for="name">Nom</label><input id="name" required maxlength="60" autocomplete="family-name"></div>
+<div><label for="firstname">Prénom</label><input id="firstname" required maxlength="60" autocomplete="given-name"></div>
+<div><label for="group">Classe / groupe</label><input id="group" required maxlength="60"></div>
+</div><p id="err" role="alert"></p><div class="actions"><button type="submit">Commencer l’activité</button></div></form>
+<p class="subtle">À la fin, le bouton d’envoi transmet à l’enseignant ton identité, ton premier score, ton score final et le nombre de vérifications. Tes justifications restent dans le bilan imprimable.</p>
+</section>
+
+<div id="progressbox" hidden class="box"><p id="who"></p><label for="progress">Progression</label><progress id="progress" max="10" value="0"></progress><p id="count" aria-live="polite"></p></div>
+<nav id="nav" aria-label="Étapes de l’activité" hidden></nav>
+<section id="work" hidden aria-labelledby="stepTitle"></section>
+
+<section id="bilan" hidden class="box">
+<h2>Bilan de l’intervention</h2><div id="report"></div>
+<div class="box" id="sendbox"><h3>Transmettre mon bilan à l’enseignant</h3><p>Vérifie les dix réponses avant l’envoi. Le premier score et le score actuel sont des repères d’entraînement.</p>
+<form id="sendform" method="post" action="https://script.google.com/macros/s/AKfycbxtkjxERsQrcyxI23_BwhUFAh1JPhGLgOrO9UIwnvhSw3zL-fUEQi9WPG6i95E16q_g/exec" target="_blank" rel="noopener"><div id="payload"></div><button id="sendbutton" type="submit">Envoyer mon bilan à l’enseignant</button></form>
+<p id="sendstatus" role="status" aria-live="polite"></p><p class="subtle">L’envoi ouvre un nouvel onglet. Le message « OK » confirme la réception. Chaque envoi ajoute une ligne : ne renvoie pas le bilan si « OK » est affiché.</p><button id="retry-send" type="button" class="secondary" hidden>Réautoriser l’envoi si celui-ci a échoué</button></div>
+<h3>La démarche professionnelle à retenir</h3><p>Identifier, vérifier les autorisations et le matériel, sécuriser, récupérer, diagnostiquer et réparer, tirer au vide, recharger par pesée, contrôler puis assurer la traçabilité.</p>
+<div class="actions"><button id="print" type="button">Imprimer / enregistrer le bilan en PDF</button><button id="back" type="button" class="secondary">Revenir aux activités</button></div>
+</section>
+<footer>Activité formative • Les données constructeur, les procédures de l’atelier et la réglementation en vigueur restent prioritaires.</footer>
+</main>
+
+<script>
+'use strict';
+const steps=['Identifier','Vérifier','Sécuriser','Intervenir','Tracer'];
+const questions=[
+{id:'identity',s:0,title:'1 • Identifier le fluide avant toute intervention',text:'L’étiquette du véhicule est illisible et son historique de réparation est inconnu. Quelle est la bonne décision ?',opts:['Raccorder immédiatement la station correspondant aux raccords présents.','Identifier le fluide avec la documentation et, en cas de doute, utiliser un analyseur avant toute récupération.','Choisir le fluide dont la bouteille est déjà installée sur la station.'],key:1,explain:'Les raccords ne garantissent pas le contenu réel du circuit. L’identification évite de contaminer la station, sa bouteille et d’autres véhicules.',hint:'Une erreur d’identification peut contaminer tout le matériel de l’atelier.',course:'Identification du fluide et risque de contamination'},
+{id:'data',s:0,title:'2 • Relever les prescriptions du constructeur',text:'Quelles informations doivent être vérifiées avant la recharge ?',opts:['Uniquement la pression mesurée au ralenti.','La nature du fluide, la masse de charge, la référence et la quantité d’huile ainsi que la procédure constructeur.','La couleur des bouchons de service et la température extérieure.'],key:1,explain:'La recharge et la lubrification dépendent des prescriptions du constructeur. Une pression seule ne permet pas de déterminer correctement la masse de fluide.',hint:'La plaque ou l’étiquette ne remplace pas toute la documentation technique.',course:'Prescriptions constructeur'},
+{id:'authorisation',s:1,title:'3 • Vérifier les autorisations',text:'Un technicien doit récupérer puis recharger le fluide. Quelle affirmation est correcte ?',opts:['Aucune qualification n’est nécessaire si la station fonctionne automatiquement.','Le technicien doit disposer de l’attestation d’aptitude adaptée et l’entreprise de l’attestation de capacité correspondante.','Seule l’autorisation du chef d’atelier est nécessaire.'],key:1,explain:'La manipulation des fluides frigorigènes est encadrée : la compétence de la personne et la capacité de l’entreprise doivent être vérifiées avant l’intervention.',hint:'Il existe une exigence pour la personne et une autre pour l’entreprise.',course:'Attestation d’aptitude et attestation de capacité'},
+{id:'equipment',s:1,title:'4 • Choisir le matériel compatible',text:'Le véhicule contient du R1234yf. Quel ensemble est adapté ?',opts:['La station, les flexibles, les raccords, la bouteille et le détecteur prévus et identifiés pour ce fluide.','N’importe quelle station si elle a été vidée la veille.','Une pompe à vide seule, sans récupération préalable.'],key:0,explain:'Le matériel doit être compatible et identifié pour éviter le mélange des fluides, les erreurs de raccordement et les risques liés aux caractéristiques du R1234yf.',hint:'Compatibilité, identification et absence de contamination sont indissociables.',course:'Matériel compatible et dédié'},
+{id:'a2l',s:2,title:'5 • Sécuriser une intervention au R1234yf',text:'Le R1234yf est classé A2L. Quelle préparation de la zone de travail est cohérente ?',opts:['Ventiler la zone, supprimer les sources d’inflammation et utiliser le matériel compatible.','Travailler dans une fosse fermée afin de retenir le fluide.','Rechercher une fuite avec une flamme pour gagner du temps.'],key:0,explain:'Le R1234yf présente une inflammabilité limitée. La ventilation, l’éloignement des sources d’inflammation et le matériel adapté réduisent le risque.',hint:'A2L signifie notamment une inflammabilité limitée qui doit être prise en compte.',course:'Sécurité du R1234yf'},
+{id:'opening',s:2,title:'6 • Ouvrir le circuit sans rejet de fluide',text:'Quelle séquence est obligatoire avant de desserrer une canalisation frigorifique ?',opts:['Desserrer lentement pour évacuer la pression, puis récupérer ce qui reste.','Récupérer le fluide, relever la masse récupérée, contrôler l’absence de pression puis ouvrir et obturer les conduites.','Mettre le circuit sous pression d’air comprimé puis ouvrir.'],key:1,explain:'Le fluide doit être récupéré avant l’ouverture. Le contrôle de l’absence de pression protège l’opérateur et l’obturation limite l’entrée d’humidité.',hint:'Aucun fluide ne doit être volontairement rejeté dans l’atmosphère.',course:'Récupération avant ouverture'},
+{id:'pressure',s:3,title:'7 • Mettre le circuit sous pression pour rechercher une fuite',text:'Quel gaz doit être employé selon la procédure de l’atelier et du constructeur ?',opts:['De l’oxygène pur.','De l’air comprimé humide.','Un gaz inerte adapté, comme l’azote sec ou un mélange traceur autorisé, avec détendeur et pression maîtrisée.'],key:2,explain:'L’oxygène et l’air comprimé ne conviennent pas. Un gaz inerte adapté, utilisé avec le matériel et la pression prescrits, permet un contrôle sûr.',hint:'Évite tout gaz favorisant l’oxydation, l’humidité ou un risque de réaction.',course:'Recherche de fuite sous pression'},
+{id:'repair',s:3,title:'8 • Traiter une fuite confirmée',text:'Une fuite est détectée sur un raccord. Quelle conduite est professionnelle ?',opts:['Ajouter du fluide jusqu’à retrouver une pression correcte.','Réparer la cause, remplacer les éléments d’étanchéité nécessaires, contrôler l’étanchéité puis poursuivre la procédure.','Ajouter un produit colmatant sans consulter la documentation.'],key:1,explain:'Une recharge ne remplace pas une réparation. La cause de la perte doit être traitée avant le tirage au vide et la recharge.',hint:'L’objectif n’est pas seulement de refaire du froid, mais de rendre le circuit durablement étanche.',course:'Réparation et contrôle d’étanchéité'},
+{id:'charge',s:3,title:'9 • Terminer correctement l’intervention',text:'Après réparation et contrôle d’étanchéité, quelle suite est correcte ?',opts:['Tirer au vide, vérifier sa tenue, recharger par pesée selon la valeur constructeur puis contrôler le fonctionnement.','Charger uniquement jusqu’à obtenir une pression qui semble normale.','Faire tourner le compresseur avec le circuit vide pour accélérer le tirage au vide.'],key:0,explain:'Le tirage au vide évacue l’air et l’humidité. La charge s’effectue par pesée selon la prescription, puis les températures, pressions et performances sont contrôlées.',hint:'La pression varie avec les conditions de fonctionnement : elle ne remplace pas la pesée.',course:'Tirage au vide, recharge et contrôle final'},
+{id:'trace',s:4,title:'10 • Assurer la traçabilité',text:'Quelles informations doivent figurer dans le suivi de l’intervention ?',opts:['Seulement le nom du client et le prix de la recharge.','Le véhicule, le fluide, les quantités récupérée et chargée, les contrôles, l’identité de l’intervenant et le devenir du fluide récupéré.','Uniquement la pression haute pression après recharge.'],key:1,explain:'La traçabilité relie le véhicule, l’opération, les quantités manipulées, l’intervenant et la destination du fluide. Elle permet le suivi technique et réglementaire.',hint:'La fiche doit permettre de reconstituer l’intervention et le parcours du fluide.',course:'Traçabilité de l’intervention et du fluide'}
+];
+
+const state={name:'',nom:'',prenom:'',group:'',submitted:false,step:0,answers:{},reason:{},attempts:{},first:{},ok:{}};
+const $=id=>document.getElementById(id);
+function escapeHTML(x){return String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function correct(q,value){return String(value)===String(q.key);}
+
+function render(){
+  $('bilan').hidden=true;$('work').hidden=false;
+  $('nav').innerHTML=steps.map((s,i)=>`<button type="button" data-step="${i}" ${i===state.step?'aria-current="step"':''}>${i+1}. ${s}</button>`).join('');
+  $('nav').querySelectorAll('button').forEach(b=>b.onclick=()=>{state.step=Number(b.dataset.step);render();$('stepTitle').focus();});
+  const qs=questions.filter(q=>q.s===state.step);
+  $('work').innerHTML=`<h2 id="stepTitle" tabindex="-1">${state.step+1} • ${steps[state.step]}</h2><p>Avant de vérifier, explique en une phrase pourquoi ta réponse convient.</p>`+qs.map(q=>`<article class="question"><h3>${q.title}</h3><p>${q.text}</p><label for="a-${q.id}">Ta réponse</label><select id="a-${q.id}"><option value="">Choisir une réponse</option>${q.opts.map((o,i)=>`<option value="${i}" ${String(state.answers[q.id])===String(i)?'selected':''}>${o}</option>`).join('')}</select><div class="answer"><label for="r-${q.id}">Mon raisonnement</label><textarea id="r-${q.id}" maxlength="1500" placeholder="Relie ta décision aux risques, aux règles et à la démarche d’intervention.">${escapeHTML(state.reason[q.id]??'')}</textarea></div><details><summary>Un indice</summary><p>${q.hint}</p></details><div class="actions"><button type="button" data-check="${q.id}">Vérifier ma réponse</button></div><div id="f-${q.id}" aria-live="polite">${state.ok[q.id]?`<div class="feedback good"><b>Réponse validée.</b> ${q.explain}<br><small>Ta justification reste à comparer à cette explication : elle n’est pas corrigée automatiquement.</small></div>`:''}</div></article>`).join('')+`<div class="actions">${state.step<4?'<button id="next" type="button">Étape suivante</button>':''}<button id="finish" class="secondary" type="button">Voir mon bilan</button></div>`;
+  qs.forEach(q=>{
+    $('a-'+q.id).oninput=e=>{state.answers[q.id]=e.target.value;if(state.ok[q.id]){state.ok[q.id]=false;$('f-'+q.id).innerHTML='';updateProgress();}};
+    $('r-'+q.id).oninput=e=>{state.reason[q.id]=e.target.value;};
+  });
+  $('work').querySelectorAll('[data-check]').forEach(b=>b.onclick=()=>check(questions.find(q=>q.id===b.dataset.check)));
+  if($('next'))$('next').onclick=()=>{state.step++;render();$('stepTitle').focus();};
+  $('finish').onclick=report;updateProgress();
+}
+
+function check(q){
+  const v=$('a-'+q.id).value,reason=$('r-'+q.id).value.trim();state.answers[q.id]=v;state.reason[q.id]=reason;
+  if(!v.trim()||!reason){$('f-'+q.id).innerHTML='<p class="feedback bad">Choisis une réponse et ajoute ton raisonnement avant de vérifier.</p>';return;}
+  const ok=correct(q,v);state.attempts[q.id]=(state.attempts[q.id]??0)+1;if(!(q.id in state.first))state.first[q.id]=ok;state.ok[q.id]=ok;
+  $('f-'+q.id).innerHTML=`<div class="feedback ${ok?'good':'bad'}"><b>${ok?'Réponse validée.':'Réponse à reprendre.'}</b> ${q.explain}<p class="subtle">Compare ton raisonnement à l’explication.${ok?'':' Modifie ta réponse, puis vérifie à nouveau.'}</p></div>`;updateProgress();
+}
+
+function updateProgress(){const n=Object.values(state.ok).filter(Boolean).length;$('progress').value=n;$('count').textContent=`${n} / 10 réponses validées. L’objectif est de maîtriser la démarche complète, pas seulement de choisir la bonne réponse.`;}
+
+function report(){
+  $('work').hidden=true;$('bilan').hidden=false;
+  const valid=questions.filter(q=>state.ok[q.id]).length,first=questions.filter(q=>state.first[q.id]===true).length;
+  const rows=questions.map(q=>`${q.title}\n${state.ok[q.id]?'Validée':state.attempts[q.id]?'À reprendre':'Non vérifiée'} • ${state.attempts[q.id]??0} vérification(s)\nRéponse : ${q.opts&&state.answers[q.id]!==undefined?q.opts[Number(state.answers[q.id])]??'Non renseignée':'Non renseignée'}\nRaisonnement : ${state.reason[q.id]||'Non renseigné'}\n`).join('\n');
+  const review=[...new Set(questions.filter(q=>!state.first[q.id]||!state.ok[q.id]).map(q=>q.course))];
+  $('report').textContent=`${state.name} • ${state.group}\n${new Date().toLocaleDateString('fr-FR')}\n\n${valid} / 10 réponses actuellement validées.\n${first} / 10 réussies à la première vérification. Il s’agit d’un repère d’entraînement, pas d’une note.\n\nÀ revoir : ${review.length?review.join(' ; '):'Relire tes justifications et vérifier que tu peux expliquer toute la démarche sans la correction.'}\n\n${rows}`;
+  refreshSend();$('bilan').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+$('startform').onsubmit=e=>{e.preventDefault();state.nom=$('name').value.trim();state.prenom=$('firstname').value.trim();state.name=state.nom+' '+state.prenom;state.group=$('group').value.trim();if(!state.nom||!state.prenom||!state.group){$('err').textContent='Indique ton nom, ton prénom et ton groupe.';return;}$('identity').hidden=true;$('progressbox').hidden=false;$('nav').hidden=false;$('who').textContent=state.name+' • '+state.group;render();};
+
+function summaryPayload(){return {type:'reglementation_securite_clim_final',nom:state.nom,prenom:state.prenom,groupe:state.group,ancrage:'Réglementation et sécurité climatisation - ancrage final',premierScore:questions.filter(q=>state.first[q.id]===true).length+'/10',scoreFinal:questions.filter(q=>state.ok[q.id]).length+'/10',tentatives:String(questions.reduce((sum,q)=>sum+(state.attempts[q.id]||0),0))};}
+
+function refreshSend(){
+  const checked=questions.filter(q=>state.attempts[q.id]).length;
+  $('sendbutton').disabled=checked<10||state.submitted;
+  if(!state.submitted)$('sendstatus').textContent=checked<10?'Il reste '+(10-checked)+' réponse(s) à vérifier avant l’envoi.':'Le bilan est prêt à être transmis.';
+  $('payload').innerHTML='';
+  Object.entries(summaryPayload()).forEach(([name,value])=>{const input=document.createElement('input');input.type='hidden';input.name=name;input.value=value;$('payload').appendChild(input);});
+}
+
+$('sendform').onsubmit=e=>{
+  if(questions.some(q=>!state.attempts[q.id])||state.submitted){e.preventDefault();return;}
+  refreshSend();state.submitted=true;$('sendstatus').textContent='Envoi demandé. Dans le nouvel onglet, vérifie que le message « OK » apparaît.';$('retry-send').hidden=false;setTimeout(()=>{$('sendbutton').disabled=true;},0);
+};
+$('retry-send').onclick=()=>{if(!window.confirm('Réessaie uniquement si le premier envoi a échoué. Un second envoi peut créer une deuxième ligne. Continuer ?'))return;state.submitted=false;$('retry-send').hidden=true;refreshSend();};
+$('print').onclick=()=>window.print();$('back').onclick=render;
+</script>
+</body>
+</html>
