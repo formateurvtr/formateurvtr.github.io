@@ -109,7 +109,19 @@ formulaire.addEventListener('submit', async evenement => {
   const resultat = {score: correction.filter(r => r.ok).length, correction};
   try {
     if (URL_RESULTATS) {
-      const body = new URLSearchParams({type: 'ancrage_bva', donnees: JSON.stringify(donnees)});
+      const body = new URLSearchParams({
+        type: 'ancrage_bva',
+        nom: donnees.nom.trim(),
+        prenom: donnees.prenom.trim(),
+        groupe: donnees.groupe.trim(),
+        activite: 'Ancrage BVA – Hydraulique et passages de rapports',
+        score: String(resultat.score),
+        total: String(questions.length),
+        donnees: JSON.stringify(donnees)
+      });
+      donnees.reponses.forEach((choix, i) => {
+        body.set('q' + (i + 1), questions[i].choix[choix]);
+      });
       await fetch(URL_RESULTATS, {method: 'POST', mode: 'no-cors', body});
     }
     statut.textContent = resultat.score + ' / ' + questions.length +
