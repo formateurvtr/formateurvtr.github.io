@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<base target="_top">
+<title>Ancrage BVA</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#eef3f9;color:#172b43;font:16px/1.55 Arial,sans-serif}
+header{background:#153352;color:white;padding:1.6rem max(1rem,calc((100% - 820px)/2))}
+h1{font-size:clamp(1.5rem,4vw,2.2rem);line-height:1.2;margin:0}
+main{max-width:850px;margin:auto;padding:1rem}
+fieldset{min-width:0;border:1px solid #c8d7e6;border-radius:12px;margin:1rem 0;padding:1rem;background:white}
+legend{font-weight:bold;padding:0 .4rem}
+.identite{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem}
+input[type=text]{display:block;width:100%;font:inherit;padding:.55rem;border:1px solid #879db2;border-radius:6px}
+.choix{display:flex;align-items:baseline;gap:.6rem;padding:.4rem;cursor:pointer}
+.choix:has(input:checked){background:#e7f0fa;border-radius:6px}
+button{background:#153352;color:white;border:0;border-radius:8px;font:inherit;font-weight:bold;padding:.8rem 1rem;cursor:pointer}
+button:disabled{opacity:.65;cursor:default}
+#statut{font-weight:bold}
+.retour{margin:.6rem 0 0;padding:.6rem;border-left:4px solid #246742;background:#edf8f1}
+.retour.erreur{border-color:#a12828;background:#fff1f1}
+</style>
+</head>
+<body>
+<header><h1>Ancrage BVA</h1><p>Commande hydraulique et passages de rapports</p></header>
+<main>
+<p>Choisissez une réponse par question. Votre score et vos réponses seront enregistrés à la validation.</p>
+<form id="activite">
+  <fieldset class="identite">
+    <legend>Identification</legend>
+    <label>Nom<input name="nom" type="text" maxlength="80" required></label>
+    <label>Prénom<input name="prenom" type="text" maxlength="80" required></label>
+    <label>Groupe<input name="groupe" type="text" maxlength="80" required></label>
+  </fieldset>
+  <div id="questions"></div>
+  <button id="envoyer" disabled>Valider et envoyer</button>
+</form>
+<p id="statut" role="status" tabindex="-1">Chargement des questions…</p>
+</main>
+<script>
+const formulaire = document.getElementById('activite');
+const zone = document.getElementById('questions');
+const bouton = document.getElementById('envoyer');
+const statut = document.getElementById('statut');
+const id = crypto.randomUUID();
+const URL_RESULTATS = ''; // Renseigner l’URL /exec du déploiement BVA.
+const reponsesCorrigees = [
+ ['Quel organe fournit le débit d’huile au circuit hydraulique de la boîte ?', ['La pompe à huile', 'La turbine du convertisseur', 'Le frein C4'], 0, 'La pompe aspire l’huile du carter et alimente le circuit.'],
+ ['Quel organe détecte la vitesse de rotation de l’arbre de sortie ?', ['Un régulateur de pression', 'Un capteur de vitesse', 'Une électrovanne'], 1, 'Le capteur transmet la mesure au calculateur.'],
+ ['Qui décide du changement de rapport à partir des informations reçues ?', ['Le piston', 'La pompe', 'Le calculateur de boîte'], 2, 'Le calculateur traite les informations et commande les électrovannes.'],
+ ['Quel est le rôle d’une électrovanne de changement de rapport ?', ['Transformer une commande électrique en action hydraulique', 'Immobiliser directement la couronne', 'Mesurer le régime moteur'], 0, 'L’électrovanne agit sur le circuit hydraulique, directement ou via un tiroir.'],
+ ['Dans quel ordre une commande aboutit-elle au serrage des disques ?', ['Piston → calculateur → électrovanne → pression', 'Calculateur → électrovanne → pression sur le piston → serrage', 'Pression → disques → calculateur → piston'], 1, 'La pression exercée sur le piston produit l’effort de serrage.'],
+ ['Que devient l’huile de la chambre du piston quand la commande met le circuit à la décharge ?', ['Elle verrouille le convertisseur', 'Elle reste emprisonnée sous pression', 'Elle s’évacue par le circuit de décharge'], 2, 'La pression d’application chute et les disques peuvent se relâcher.'],
+ ['Sur l’Allison étudiée, C5 est déjà serré au neutre à l’arrêt. Quel élément faut-il serrer pour engager la 1ʳᵉ ?', ['C1', 'C2', 'C4'], 0, 'C1 relie l’arbre de turbine à l’arbre principal. C5 maintient la couronne de P3 immobile.'],
+ ['Que commande la boîte lors du passage de la 1ʳᵉ à la 2ᵉ ?', ['Relâcher C1 et serrer C2', 'Relâcher C5 et serrer C4, avec C1 maintenu', 'Relâcher C4 et serrer C5, avec C1 maintenu'], 1, 'Le point d’appui passe de la couronne de P3 à celle de P2.'],
+ ['Quels éléments sont serrés en 4ᵉ, en prise directe ?', ['C1 et C3', 'C2 et C4', 'C1 et C2'], 2, 'C3 se relâche, C2 se serre et C1 reste serré.'],
+ ['Quel est l’intérêt de coordonner la baisse de pression de l’élément sortant et la montée de pression de l’élément entrant ?', ['Limiter le trou de couple et les à-coups', 'Augmenter en permanence la pression de lubrification', 'Immobiliser l’arbre de sortie à chaque passage'], 0, 'La pression évolue progressivement pour transférer le couple entre les deux éléments.'],
+ ['En marche arrière, quelle combinaison est serrée ?', ['C1 et C5', 'C2 et C3', 'C3 et C5'], 2, 'C3 bloque la couronne de P1. C5 bloque celle de P3 et, par liaison mécanique, le porte-satellites de P2.'],
+ ['Un rapport est demandé, mais la pression reste faible sur le circuit du frein concerné pendant sa commande. Quelle piste faut-il vérifier ?', ['Le nombre de dents de la couronne', 'L’alimentation hydraulique du frein et les fuites dans son circuit', 'Le rapport de pont'], 1, 'Une pression insuffisante peut limiter l’effort de serrage. Elle ne localise pas à elle seule la cause.']
+];
+const questions = reponsesCorrigees.map(([question, choix]) => ({question, choix}));
+
+{
+  const liste = questions;
+  for (const [i, item] of liste.entries()) {
+    const bloc = document.createElement('fieldset');
+    const titre = document.createElement('legend');
+    titre.textContent = (i + 1) + '. ' + item.question;
+    bloc.append(titre);
+    for (const [j, choix] of item.choix.entries()) {
+      const label = document.createElement('label');
+      const radio = document.createElement('input');
+      label.className = 'choix';
+      radio.type = 'radio';
+      radio.name = 'q' + i;
+      radio.value = j;
+      radio.required = true;
+      label.append(radio, document.createTextNode(choix));
+      bloc.append(label);
+    }
+    zone.append(bloc);
+  }
+  bouton.disabled = false;
+  statut.textContent = '';
+}
+
+formulaire.addEventListener('submit', async evenement => {
+  evenement.preventDefault();
+  const champs = new FormData(formulaire);
+  for (const cle of ['nom', 'prenom', 'groupe']) {
+    if (!champs.get(cle).trim()) {
+      formulaire.elements.namedItem(cle).focus();
+      statut.textContent = 'Renseignez le nom, le prénom et le groupe.';
+      return;
+    }
+  }
+  const donnees = {
+    id, nom: champs.get('nom'), prenom: champs.get('prenom'), groupe: champs.get('groupe'),
+    reponses: questions.map((q, i) => Number(champs.get('q' + i)))
+  };
+  bouton.disabled = true;
+  for (const bloc of formulaire.querySelectorAll('fieldset')) bloc.disabled = true;
+  statut.textContent = 'Enregistrement…';
+  const correction = reponsesCorrigees.map(([, choix, bonne, explication], i) =>
+    ({ok: donnees.reponses[i] === bonne, bonne: choix[bonne], explication}));
+  const resultat = {score: correction.filter(r => r.ok).length, correction};
+  try {
+    if (URL_RESULTATS) {
+      const body = new URLSearchParams({type: 'ancrage_bva', donnees: JSON.stringify(donnees)});
+      await fetch(URL_RESULTATS, {method: 'POST', mode: 'no-cors', body});
+    }
+    statut.textContent = resultat.score + ' / ' + questions.length +
+      (URL_RESULTATS ? ' · Envoi lancé (réception à vérifier dans Sheets).' :
+        ' · Envoi indisponible : Google Sheets reste à configurer.');
+    bouton.textContent = 'Corrigé';
+    statut.focus();
+    resultat.correction.forEach((r, i) => {
+      const retour = document.createElement('p');
+      retour.className = r.ok ? 'retour' : 'retour erreur';
+      retour.textContent = r.ok ? 'Correct. ' + r.explication :
+        'Réponse attendue — ' + r.bonne + '. ' + r.explication;
+      zone.children[i].append(retour);
+    });
+  } catch {
+    bouton.disabled = false;
+    for (const bloc of formulaire.querySelectorAll('fieldset')) bloc.disabled = false;
+    statut.textContent = 'Enregistrement non confirmé. Vous pouvez réessayer.';
+    statut.focus();
+  }
+});
+</script>
+</body>
+</html>
